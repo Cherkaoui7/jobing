@@ -1,101 +1,236 @@
-<footer>
-  <div class="footer-main">
+<footer class="modern-footer">
+
     <div class="container">
-      <div class="row">
-        <div class="col-sm-6 col-md-3">
-          <div class="footer-links">
-            <h5 class="lead footer-hdr">For Job Seekers</h5>
-            <div class="line-divider"></div>
-            <div class="footer-link-list">
-             <a href="{{route('register')}}" class="footer-links">Register <span class="badge badge-primary">Free</span></a>
-             <a href="{{route('login')}}" class="footer-links">Login</a>
-             <a href="" class="footer-links">Find jobs</a>
-             <a href="#" class="footer-links">Faq</a>
+
+        <div class="row gy-5">
+
+            <div class="col-lg-4">
+
+                <div class="footer-brand">
+
+                    <h2>
+                        <i class="fas fa-briefcase"></i>
+                        JobLister
+                    </h2>
+
+                    <p>
+                        AI powered recruitment platform helping talents
+                        discover the best opportunities faster.
+                    </p>
+
+                    <div class="footer-socials">
+
+                        <a href="#">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+
+                        <a href="#">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+
+                        <a href="#">
+                            <i class="fab fa-linkedin-in"></i>
+                        </a>
+
+                        <a href="#">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+
+                    </div>
+
+                </div>
+
             </div>
-          </div>
-        </div>
-        <div class="col-sm-6 col-md-3">
-          <div class="footer-links">
-            <h5 class="lead footer-hdr">For Employers</h5>
-            <div class="line-divider"></div>
-            <div class="footer-link-list">
-             <a href="{{route('register')}}" class="footer-links">Register <span class="badge badge-primary">Free</span></a>
-             <a href="{{route('login')}}" class="footer-links">Login</a>
-             <a href="{{route('post.create')}}" class="footer-links">Vacancy Announcement</a>
-             <a href="#" class="footer-links">Faq</a>
+
+
+            <div class="col-lg-2 col-md-4">
+
+                <div class="footer-links">
+
+                    <h5>For Candidates</h5>
+
+                    <a href="{{route('register')}}">Create Account</a>
+
+                    <a href="{{route('login')}}">Login</a>
+
+                    <a href="{{route('job.index')}}">Browse Jobs</a>
+
+                    <a href="#">AI Resume Builder</a>
+
+                </div>
+
             </div>
-          </div>
-        </div>
-        <div class="col-sm-6 col-md-3">
-          <div class="footer-links">
-            <h5 class="lead footer-hdr">Links</h5>
-            <div class="line-divider"></div>
-            <div class="footer-link-list">
-             <a href="#" class="footer-links">Home</a>
-             <a href="#" class="footer-links">About Us</a>
-             <a href="#" class="footer-links">Advertise</a>
-             <a href="#" class="footer-links">Contact Us</a>
-             <a href="#" class="footer-links">Faq</a>
+
+
+            <div class="col-lg-2 col-md-4">
+
+                <div class="footer-links">
+
+                    <h5>For Employers</h5>
+
+                    <a href="{{route('register')}}">Register</a>
+
+                    <a href="{{route('post.create')}}">Post Jobs</a>
+
+                    <a href="#">Find Talents</a>
+
+                    <a href="#">Dashboard</a>
+
+                </div>
+
             </div>
-          </div>
-        </div>
-        <div class="col-sm-6 col-md-3">
-          <div class="footer-links">
-            <h3 class="footer-brand mb-2">JobLister</h3>
-            <div class="footer-link-list">
-             <a href="#" class="footer-links"><i class="fas fa-compass"></i> Newroad,kathmadndu-64400,Nepal</a>
-             <a href="tel:98400001511" class="footer-links"><i class="fas fa-phone"></i> +977-6000-000</a>
-             <a href="tel:98400001511" class="footer-links"><i class="fas fa-mobile"></i> +977-9840003200</a>
-             <a href="mailto:info@joblister.com" class="footer-links"><i class="fas fa-envelope"></i> info@joblister.com</a>
-             <div class="social-links">
-               <a href="https://www.facebook.com" target="_blank" class="social-link"><i class="fab fa-facebook"></i></a>
-               <a href="https://www.twitter.com"  target="_blank" class="social-link"><i class="fab fa-twitter"></i></a>
-               <a href="https://www.linkedin.com"   target="_blank" class="social-link"><i class="fab fa-linkedin" ></i></a>
-             </div>
+
+
+            <div class="col-lg-2 col-md-4">
+
+                <div class="footer-links">
+
+                    <h5>Company</h5>
+
+                    <a href="#">About</a>
+
+                    <a href="#">Contact</a>
+
+                    <a href="#">Privacy Policy</a>
+
+                    <a href="#">Terms</a>
+
+                </div>
+
             </div>
-          </div>
+
+
+            <div class="col-lg-2">
+
+                <div class="footer-contact">
+
+                    <h5>Contact</h5>
+
+                    <p>
+                        <i class="fas fa-map-marker-alt"></i>
+                        Casablanca, Morocco
+                    </p>
+
+                    <p>
+                        <i class="fas fa-phone"></i>
+                        +212 600000000
+                    </p>
+
+                    <p>
+                        <i class="fas fa-envelope"></i>
+                        support@joblister.com
+                    </p>
+
+                </div>
+
+            </div>
+
         </div>
-      </div>
+
+        <div class="footer-bottom">
+
+            <p>
+                © 2026 JobLister. All rights reserved.
+            </p>
+
+        </div>
+
     </div>
-  </div>
+
 </footer>
 
+
 @push('css')
+
 <style>
-  .footer-main{
-    background-color:#272727;
-    color:#ddd;
-  }
-  .footer-links{
-    padding-top:2rem;
-    padding-bottom: 2rem;
-  }
-  .footer-links .footer-hdr{
-    color:#ddd;
-  }
-  .footer-links .footer-link-list .footer-links{
+
+.modern-footer{
+    background:#0f172a;
+    padding:80px 0 30px;
+    color:#cbd5e1;
+    margin-top:100px;
+}
+
+.footer-brand h2{
+    color:white;
+    font-weight:800;
+    margin-bottom:20px;
+}
+
+.footer-brand h2 i{
+    color:#3b82f6;
+    margin-right:10px;
+}
+
+.footer-brand p{
+    line-height:1.8;
+    color:#94a3b8;
+    margin-bottom:25px;
+}
+
+.footer-socials{
+    display:flex;
+    gap:15px;
+}
+
+.footer-socials a{
+    width:42px;
+    height:42px;
+    background:rgba(255,255,255,.08);
+    border-radius:12px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:white;
+    transition:.3s;
+}
+
+.footer-socials a:hover{
+    background:#2563eb;
+    transform:translateY(-5px);
+}
+
+.footer-links h5,
+.footer-contact h5{
+    color:white;
+    margin-bottom:25px;
+    font-weight:700;
+}
+
+.footer-links a{
     display:block;
-    color:#ccc;
-    padding:3px 0; 
+    color:#94a3b8;
+    margin-bottom:14px;
+    transition:.3s;
+}
+
+.footer-links a:hover{
+    color:white;
+    padding-left:5px;
+}
+
+.footer-contact p{
+    margin-bottom:15px;
+    color:#94a3b8;
+}
+
+.footer-contact i{
+    color:#3b82f6;
+    margin-right:10px;
+}
+
+.footer-bottom{
+    border-top:1px solid rgba(255,255,255,.08);
+    margin-top:60px;
+    padding-top:25px;
+    text-align:center;
+}
+
+.footer-bottom p{
+    color:#64748b;
     margin:0;
-    font-size:.9rem;
-  }
-  .footer-links .footer-link-list .footer-links:hover{
-    color:white;
-  }
-  .footer-main .social-links {
-    margin:20px 0;
-  }
-  .footer-main .social-links .social-link{
-    background-color:white; 
-    color:#333;
-    padding:8px 10px;
-    border-radius: 50%;
-    transition:all .3s ease;
-  }
-  .footer-main .social-links .social-link:hover{
-    color:white;
-    background-color:#0261A6;
-  }
+}
+
 </style>
+
 @endpush

@@ -35,6 +35,16 @@ Route::middleware('auth')->prefix('account')->group(function () {
   //applyjobs
   Route::get('apply-job', [AccountController::class, 'applyJobView'])->name('account.applyJob');
   Route::post('apply-job', [AccountController::class, 'applyJob'])->name('account.applyJob');
+  Route::put('update-profile', [AccountController::class, 'updateProfile'])->name('account.updateProfile');
+
+
+  Route::get('cv-builder', [AccountController::class, 'cvBuilder'])->name('account.cvBuilder');
+
+Route::post('generate-cv', [AccountController::class, 'generateCV'])->name('account.generateCV');
+
+Route::get('resume-analyzer', [AccountController::class, 'resumeAnalyzer'])->name('account.resumeAnalyzer');
+
+Route::post('analyze-resume', [AccountController::class, 'analyzeResume'])->name('account.analyzeResume');
 
   //Admin Role Routes
   Route::group(['middleware' => ['role:admin']], function () {

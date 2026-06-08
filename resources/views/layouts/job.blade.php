@@ -1,11 +1,15 @@
 @extends('layouts.app')
+
 @section('layout-holder')
-  @include('inc.navbar')
-  <div class="container">
+
+    @include('inc.navbar')
+
     @yield('content')
-  </div>
-  @guest      
-    @include('inc.login-banner')
-  @endguest
-  @include('inc.footer')
+
+    @guest
+        @include('inc.login-banner')
+    @endguest
+
+    @include('inc.footer')
+
 @endsection

@@ -56,9 +56,24 @@
             <div class="mb-3 d-flex justify-content-end">
               <div class="small">
                 <a href="{{URL::previous()}}" class="btn primary-outline-btn">Cancel</a>
-                <form action="{{route('account.applyJob')}}" method="POST" class="d-inline-block">
+                <form action="{{route('account.applyJob')}}" method="POST" enctype="multipart/form-data" class="d-inline-block">
                   @csrf
                   <input type="hidden" name="post_id" value="{{$post->id}}">
+                  <div class="mb-3 text-left">
+    <label class="font-weight-bold">Upload your CV (PDF)</label>
+
+    <input 
+        type="file" 
+        name="cv" 
+        class="form-control mt-2"
+        accept=".pdf,.doc,.docx"
+        required
+    >
+
+    <small class="text-muted">
+        Allowed: PDF, DOC, DOCX
+    </small>
+</div>
                   <button type="submit" class="btn primary-btn">Send Application <i class="fas fa-chevron-right"></i></a>
                 </form>
               </div>

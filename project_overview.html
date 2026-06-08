@@ -1,0 +1,1187 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JobLister — Présentation du Projet</title>
+    <!-- Importation de polices modernes Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Lucide Icons CDN -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        :root {
+            --bg-color: #0b0f19;
+            --card-bg: rgba(17, 24, 39, 0.6);
+            --card-border: rgba(255, 255, 255, 0.08);
+            --card-hover-border: rgba(99, 102, 241, 0.4);
+            --text-main: #cbd5e1;
+            --text-muted: #9ca3af;
+            --text-bright: #ffffff;
+            --primary: #6366f1; /* Indigo */
+            --primary-glow: rgba(99, 102, 241, 0.15);
+            --secondary: #8b5cf6; /* Violet */
+            --secondary-glow: rgba(139, 92, 246, 0.15);
+            --accent: #10b981; /* Émeraude */
+            --accent-glow: rgba(16, 185, 129, 0.1);
+            --font-outfit: 'Outfit', sans-serif;
+            --font-inter: 'Inter', sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: var(--font-inter);
+            line-height: 1.6;
+            overflow-x: hidden;
+            min-height: 100vh;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(99, 102, 241, 0.06) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(139, 92, 246, 0.06) 0%, transparent 40%);
+            background-attachment: fixed;
+        }
+
+        h1, h2, h3, h4 {
+            font-family: var(--font-outfit);
+            color: var(--text-bright);
+            font-weight: 700;
+        }
+
+        /* --- En-tête / Barre de navigation --- */
+        .navbar {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(11, 15, 25, 0.85);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--card-border);
+            padding: 1.2rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            font-size: 1.6rem;
+            font-weight: 800;
+            font-family: var(--font-outfit);
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-decoration: none;
+        }
+
+        .nav-logo svg {
+            stroke: var(--primary);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 0.8rem;
+        }
+
+        .nav-link {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            font-size: 0.95rem;
+            padding: 0.6rem 1.2rem;
+            border-radius: 9999px;
+            border: 1px solid transparent;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .nav-link:hover {
+            color: var(--text-bright);
+            background: rgba(255, 255, 255, 0.04);
+        }
+
+        .nav-link.active {
+            color: var(--text-bright);
+            background: var(--primary-glow);
+            border-color: rgba(99, 102, 241, 0.3);
+        }
+
+        /* --- Section Hero --- */
+        .hero {
+            padding: 5rem 2rem 3rem 2rem;
+            max-width: 1100px;
+            margin: 0 auto;
+            text-align: center;
+            position: relative;
+        }
+
+        .hero-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.4rem 1.2rem;
+            background: var(--primary-glow);
+            border: 1px solid rgba(99, 102, 241, 0.25);
+            border-radius: 9999px;
+            color: var(--primary);
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 2rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-family: var(--font-outfit);
+        }
+
+        .hero h1 {
+            font-size: 3.8rem;
+            line-height: 1.15;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, #ffffff 30%, #a5b4fc 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -0.02em;
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            color: var(--text-muted);
+            max-width: 800px;
+            margin: 0 auto;
+            font-weight: 400;
+        }
+
+        /* --- Conteneur Général --- */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem 5rem 2rem;
+        }
+
+        /* --- Panneaux des Onglets --- */
+        .section-panel {
+            display: none;
+            animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        .section-panel.active {
+            display: block;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* --- Mise en page Grid & Flex --- */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1.1fr 0.9fr;
+            gap: 2.5rem;
+            align-items: start;
+        }
+
+        @media (max-width: 900px) {
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            padding: 2.2rem;
+            backdrop-filter: blur(16px);
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            border-color: var(--card-hover-border);
+            box-shadow: 0 20px 40px -15px rgba(99, 102, 241, 0.15);
+        }
+
+        /* --- Styles Section: À Propos --- */
+        .about-section h2 {
+            font-size: 2.2rem;
+            margin-bottom: 1.5rem;
+            position: relative;
+            display: inline-block;
+        }
+
+        .about-section h2::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: -8px;
+            width: 60px;
+            height: 4px;
+            background: linear-gradient(95deg, var(--primary), var(--secondary));
+            border-radius: 2px;
+        }
+
+        .about-content {
+            margin-top: 1.8rem;
+        }
+
+        .about-content p {
+            font-size: 1.05rem;
+            color: var(--text-main);
+            margin-bottom: 1.5rem;
+            text-align: justify;
+        }
+
+        .about-highlight {
+            border-left: 4px solid var(--primary);
+            padding: 0.5rem 0 0.5rem 1.5rem;
+            margin: 2rem 0;
+            background: rgba(99, 102, 241, 0.03);
+            border-radius: 0 12px 12px 0;
+        }
+
+        .about-highlight p {
+            font-style: italic;
+            font-size: 1.1rem;
+            color: var(--text-bright);
+            margin-bottom: 0;
+        }
+
+        /* Widget Sélecteur de Rôles */
+        .widget-title {
+            font-size: 1.3rem;
+            margin-bottom: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .role-selector {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+
+        .role-card {
+            display: flex;
+            align-items: center;
+            gap: 1.2rem;
+            padding: 1.2rem;
+            border-radius: 16px;
+            border: 1px solid var(--card-border);
+            background: rgba(255, 255, 255, 0.02);
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .role-card:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 255, 255, 0.15);
+        }
+
+        .role-card.active {
+            background: var(--primary-glow);
+            border-color: var(--primary);
+            box-shadow: 0 0 20px rgba(99, 102, 241, 0.1);
+        }
+
+        .role-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.04);
+            color: var(--primary);
+            transition: all 0.3s;
+        }
+
+        .role-card.active .role-icon {
+            background: var(--primary);
+            color: white;
+        }
+
+        .role-info-meta h4 {
+            font-size: 1.1rem;
+            margin-bottom: 0.2rem;
+        }
+
+        .role-info-meta p {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .role-details-panel {
+            margin-top: 1.5rem;
+            background: rgba(11, 15, 25, 0.4);
+            border: 1px dashed var(--card-border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            min-height: 200px;
+            transition: all 0.3s;
+        }
+
+        .role-details-panel h3 {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+            color: var(--primary);
+        }
+
+        .role-details-panel p {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            margin-bottom: 1rem;
+        }
+
+        .role-features {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.6rem;
+        }
+
+        .role-features li {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            font-size: 0.9rem;
+            color: var(--text-main);
+        }
+
+        .role-features li .bullet {
+            width: 6px;
+            height: 6px;
+            background: var(--primary);
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        /* --- Styles Section: Structure --- */
+        .struct-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2.5rem;
+        }
+
+        @media (max-width: 900px) {
+            .struct-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .tree-card {
+            max-height: 550px;
+            overflow-y: auto;
+            padding-right: 1rem;
+        }
+
+        /* Custom Scrollbar for Tree */
+        .tree-card::-webkit-scrollbar {
+            width: 6px;
+        }
+        .tree-card::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.01);
+        }
+        .tree-card::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+        }
+        .tree-card::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .tree-root {
+            font-family: 'Consolas', 'Courier New', Courier, monospace;
+        }
+
+        .tree-node {
+            margin-left: 1.5rem;
+            position: relative;
+            padding: 0.35rem 0;
+            border-left: 1px dashed rgba(255, 255, 255, 0.15);
+            padding-left: 1.2rem;
+        }
+
+        .tree-node-title {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            cursor: pointer;
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            transition: all 0.2s ease;
+            user-select: none;
+        }
+
+        .tree-node-title:hover {
+            color: var(--text-bright);
+        }
+
+        .tree-node-title.active {
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .tree-node-title svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        .struct-details-card {
+            background: rgba(17, 24, 39, 0.4);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            padding: 2.2rem;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+        }
+
+        .struct-details-header {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            margin-bottom: 1.2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--card-border);
+        }
+
+        .struct-details-header h3 {
+            font-size: 1.3rem;
+            font-family: 'Consolas', monospace;
+            color: var(--primary);
+        }
+
+        .struct-details-body {
+            font-size: 1rem;
+            color: var(--text-main);
+            line-height: 1.7;
+        }
+
+        .struct-details-body strong {
+            color: var(--text-bright);
+        }
+
+        /* --- Styles Section: Technologies --- */
+        .tech-intro {
+            text-align: center;
+            max-width: 700px;
+            margin: 0 auto 3rem auto;
+        }
+
+        .tech-intro h2 {
+            font-size: 2.2rem;
+            margin-bottom: 1rem;
+        }
+
+        .tech-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2rem;
+        }
+
+        .tech-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            padding: 2rem;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(16px);
+        }
+
+        .tech-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 5px;
+            height: 100%;
+            background: linear-gradient(to bottom, var(--primary), var(--secondary));
+            opacity: 0.8;
+        }
+
+        .tech-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--card-hover-border);
+            box-shadow: 0 20px 45px -15px rgba(99, 102, 241, 0.2);
+        }
+
+        .tech-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1.2rem;
+        }
+
+        .tech-icon-title {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .tech-icon-title svg {
+            color: var(--primary);
+        }
+
+        .tech-title {
+            font-weight: 700;
+            font-size: 1.25rem;
+            color: var(--text-bright);
+        }
+
+        .tech-version {
+            font-size: 0.8rem;
+            padding: 0.25rem 0.75rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 9999px;
+            color: var(--text-muted);
+            font-weight: 600;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+        }
+
+        .tech-desc {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            margin-bottom: 1.5rem;
+            min-height: 70px;
+        }
+
+        .tech-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .tech-tag {
+            font-size: 0.75rem;
+            padding: 0.3rem 0.7rem;
+            background: rgba(99, 102, 241, 0.08);
+            color: #a5b4fc;
+            border-radius: 8px;
+            font-weight: 500;
+            border: 1px solid rgba(99, 102, 241, 0.15);
+        }
+
+        /* --- Styles Section: Fonctionnalités --- */
+        .feat-intro {
+            text-align: center;
+            max-width: 750px;
+            margin: 0 auto 3rem auto;
+        }
+
+        .feat-intro h2 {
+            font-size: 2.2rem;
+            margin-bottom: 1rem;
+        }
+
+        .feat-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+            gap: 2rem;
+        }
+
+        .feat-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            padding: 2.2rem;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            backdrop-filter: blur(16px);
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+        }
+
+        .feat-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--card-hover-border);
+            box-shadow: 0 20px 40px -15px rgba(99, 102, 241, 0.15);
+        }
+
+        .feat-icon-box {
+            width: 52px;
+            height: 52px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--primary-glow);
+            color: var(--primary);
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            transition: all 0.3s;
+        }
+
+        .feat-card:hover .feat-icon-box {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 0 15px var(--primary);
+        }
+
+        .feat-card h3 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--text-bright);
+        }
+
+        .feat-card p {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+
+        /* --- Footer --- */
+        footer {
+            margin-top: 5rem;
+            padding: 3rem 2rem;
+            background: rgba(7, 10, 17, 0.9);
+            border-top: 1px solid var(--card-border);
+            text-align: center;
+        }
+
+        footer p {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        footer .credits {
+            margin-top: 0.8rem;
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.3);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Barre de Navigation -->
+    <nav class="navbar">
+        <a href="#" class="nav-logo">
+            <i data-lucide="briefcase"></i> JobLister
+        </a>
+        <div class="nav-links">
+            <div class="nav-link active" data-target="panel-about">
+                <i data-lucide="info"></i> À Propos
+            </div>
+            <div class="nav-link" data-target="panel-structure">
+                <i data-lucide="folder-tree"></i> Structure
+            </div>
+            <div class="nav-link" data-target="panel-tech">
+                <i data-lucide="layers"></i> Technologies
+            </div>
+            <div class="nav-link" data-target="panel-features">
+                <i data-lucide="sparkles"></i> Fonctionnalités
+            </div>
+        </div>
+    </nav>
+
+    <!-- Zone Hero Commune -->
+    <header class="hero">
+        <div class="hero-tag">
+            <i data-lucide="terminal"></i> Laravel 8 & Vue.js
+        </div>
+        <h1>Portail de Recrutement JobLister</h1>
+        <p>Découvrez la structure technique, l'écosystème de développement et les fonctionnalités clés de cette solution web complète de mise en relation de talents et d'entreprises.</p>
+    </header>
+
+    <!-- Zone principale de contenu -->
+    <main class="container">
+
+        <!-- PANNEAU : À PROPOS -->
+        <section id="panel-about" class="section-panel active">
+            <div class="grid-2">
+                <div class="card about-section">
+                    <h2>À Propos de JobLister</h2>
+                    <div class="about-content">
+                        <p>
+                            JobLister est une plateforme web moderne conçue pour simplifier et accélérer le processus de recrutement. Le projet permet de connecter les candidats à la recherche d'opportunités professionnelles avec les recruteurs (auteurs) cherchant à renforcer leurs équipes.
+                        </p>
+                        <p>
+                            L'application fournit des outils intégrés innovants, notamment un concepteur de curriculum vitae en ligne (CV Builder) pour faciliter la création de profils, et un analyseur de documents PDF automatisé permettant de décoder le texte des CV.
+                        </p>
+                        
+                        <div class="about-highlight">
+                            <p>« Une plateforme pensée pour optimiser l'expérience de recherche d'emploi grâce à une interface fluide en Single Page Application (SPA) et une architecture backend robuste sous Laravel. »</p>
+                        </div>
+
+                        <h2>Pourquoi ce Projet ?</h2>
+                        <p>
+                            Ce projet a été conçu pour allier la puissance et la sécurité de l'écosystème Laravel en backend à la réactivité et la fluidité des interfaces JavaScript modernes en frontend. L'objectif est d'offrir une expérience utilisateur continue (notamment lors de la recherche dynamique d'emplois) tout en conservant une logique d'authentification robuste et une gestion stricte des privilèges d'accès via des rôles d'utilisateurs.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3 class="widget-title"><i data-lucide="users"></i> Acteurs & Rôles</h3>
+                    <p style="font-size: 0.95rem; color: var(--text-muted); margin-bottom: 1.5rem;">
+                        Sélectionnez un rôle pour voir ses privilèges sur la plateforme :
+                    </p>
+
+                    <div class="role-selector">
+                        <div class="role-card active" data-role="candidate">
+                            <div class="role-icon">
+                                <i data-lucide="user"></i>
+                            </div>
+                            <div class="role-info-meta">
+                                <h4>Candidat (User)</h4>
+                                <p>Recherche & Candidatures</p>
+                            </div>
+                        </div>
+
+                        <div class="role-card" data-role="employer">
+                            <div class="role-icon">
+                                <i data-lucide="building"></i>
+                            </div>
+                            <div class="role-info-meta">
+                                <h4>Employeur (Author)</h4>
+                                <p>Publication d'offres & Recrutement</p>
+                            </div>
+                        </div>
+
+                        <div class="role-card" data-role="admin">
+                            <div class="role-icon">
+                                <i data-lucide="shield-check"></i>
+                            </div>
+                            <div class="role-info-meta">
+                                <h4>Administrateur (Admin)</h4>
+                                <p>Modération & Gestion système</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Détails dynamiques du rôle -->
+                    <div id="role-details" class="role-details-panel">
+                        <h3 id="selected-role-title">Candidat (User)</h3>
+                        <p id="selected-role-desc">Le rôle par défaut attribué lors de l'inscription. Axé sur la recherche active d'opportunités et la valorisation du profil.</p>
+                        <ul id="selected-role-features" class="role-features">
+                            <li><span class="bullet"></span>Recherche d'offres en temps réel via la SPA Vue.js</li>
+                            <li><span class="bullet"></span>Candidature en ligne avec dépôt de CV</li>
+                            <li><span class="bullet"></span>Sauvegarde des offres favorites (My Saved Jobs)</li>
+                            <li><span class="bullet"></span>Accès au CV Builder (génération de CV PDF)</li>
+                            <li><span class="bullet"></span>Accès à l'outil d'analyse de CV</li>
+                            <li><span class="bullet"></span>Demande de surclassement pour devenir Employeur</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- PANNEAU : STRUCTURE -->
+        <section id="panel-structure" class="section-panel">
+            <div class="struct-layout">
+                <!-- Arbre des dossiers -->
+                <div class="card tree-card">
+                    <h3 style="margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.5rem;">
+                        <i data-lucide="folder-open"></i> Explorateur du Projet
+                    </h3>
+                    <div class="tree-root">
+                        <!-- app/ -->
+                        <div class="tree-node">
+                            <div class="tree-node-title active" data-item="root-app">
+                                <i data-lucide="folder"></i> app/
+                            </div>
+                            <!-- app/Http/Controllers/ -->
+                            <div class="tree-node">
+                                <div class="tree-node-title" data-item="app-controllers">
+                                    <i data-lucide="folder"></i> Http/Controllers/
+                                </div>
+                            </div>
+                            <!-- app/Models/ -->
+                            <div class="tree-node">
+                                <div class="tree-node-title" data-item="app-models">
+                                    <i data-lucide="folder"></i> Models/
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- bootstrap/ -->
+                        <div class="tree-node">
+                            <div class="tree-node-title" data-item="root-bootstrap">
+                                <i data-lucide="folder"></i> bootstrap/
+                            </div>
+                        </div>
+
+                        <!-- config/ -->
+                        <div class="tree-node">
+                            <div class="tree-node-title" data-item="root-config">
+                                <i data-lucide="folder"></i> config/
+                            </div>
+                        </div>
+
+                        <!-- database/ -->
+                        <div class="tree-node">
+                            <div class="tree-node-title" data-item="root-database">
+                                <i data-lucide="folder"></i> database/
+                            </div>
+                        </div>
+
+                        <!-- public/ -->
+                        <div class="tree-node">
+                            <div class="tree-node-title" data-item="root-public">
+                                <i data-lucide="folder"></i> public/
+                            </div>
+                        </div>
+
+                        <!-- resources/ -->
+                        <div class="tree-node">
+                            <div class="tree-node-title" data-item="root-resources">
+                                <i data-lucide="folder"></i> resources/
+                            </div>
+                            <!-- resources/js/ -->
+                            <div class="tree-node">
+                                <div class="tree-node-title" data-item="res-js">
+                                    <i data-lucide="folder"></i> js/
+                                </div>
+                            </div>
+                            <!-- resources/views/ -->
+                            <div class="tree-node">
+                                <div class="tree-node-title" data-item="res-views">
+                                    <i data-lucide="folder"></i> views/
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- routes/web.php -->
+                        <div class="tree-node">
+                            <div class="tree-node-title" data-item="root-routes">
+                                <i data-lucide="file-code"></i> routes/web.php
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Panneau de détails de la structure -->
+                <div class="struct-details-card">
+                    <div class="struct-details-header">
+                        <i data-lucide="info" style="color: var(--primary);"></i>
+                        <h3 id="struct-detail-title">app/</h3>
+                    </div>
+                    <div id="struct-detail-desc" class="struct-details-body">
+                        Le dossier <strong>app/</strong> est le noyau de l'application Laravel. Il contient la logique métier de l'application JobLister, incluant les contrôleurs, les modèles de données et les fournisseurs de services.
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- PANNEAU : TECHNOLOGIES -->
+        <section id="panel-tech" class="section-panel">
+            <div class="tech-intro">
+                <h2>Stack Technique & Dépendances</h2>
+                <p>Développé sous une architecture moderne, JobLister exploite des technologies robustes, stables et éprouvées pour garantir la performance et la sécurité.</p>
+            </div>
+
+            <div class="tech-grid">
+                <!-- Laravel -->
+                <div class="tech-card">
+                    <div class="tech-header">
+                        <div class="tech-icon-title">
+                            <i data-lucide="server"></i>
+                            <span class="tech-title">Laravel Framework</span>
+                        </div>
+                        <span class="tech-version">v8.0</span>
+                    </div>
+                    <p class="tech-desc">Moteur principal backend. Gère l'ORM Eloquent, le routage web, les injections de dépendances, et fournit une structure solide pour le projet.</p>
+                    <div class="tech-tags">
+                        <span class="tech-tag">PHP 8.2+</span>
+                        <span class="tech-tag">Eloquent ORM</span>
+                        <span class="tech-tag">MVC</span>
+                    </div>
+                </div>
+
+                <!-- Frontend Framework -->
+                <div class="tech-card">
+                    <div class="tech-header">
+                        <div class="tech-icon-title">
+                            <i data-lucide="monitor"></i>
+                            <span class="tech-title">Vue.js & React</span>
+                        </div>
+                        <span class="tech-version">Intégré</span>
+                    </div>
+                    <p class="tech-desc">Double intégration frontend. Vue.js propulse la SPA de recherche d'emplois dynamique, tandis que des scripts React gèrent les configurations avancées de routing.</p>
+                    <div class="tech-tags">
+                        <span class="tech-tag">Vue 2/3</span>
+                        <span class="tech-tag">React 19</span>
+                        <span class="tech-tag">Laravel Mix</span>
+                    </div>
+                </div>
+
+                <!-- Base de données -->
+                <div class="tech-card">
+                    <div class="tech-header">
+                        <div class="tech-icon-title">
+                            <i data-lucide="database"></i>
+                            <span class="tech-title">MySQL</span>
+                        </div>
+                        <span class="tech-version">SQL</span>
+                    </div>
+                    <p class="tech-desc">Stockage de données relationnel gérant les utilisateurs, les entreprises, les catégories d'activité, les offres d'emploi, et les candidatures associées.</p>
+                    <div class="tech-tags">
+                        <span class="tech-tag">Relations Pivot</span>
+                        <span class="tech-tag">Seeders SQL</span>
+                        <span class="tech-tag">Migrations</span>
+                    </div>
+                </div>
+
+                <!-- Spatie Permission -->
+                <div class="tech-card">
+                    <div class="tech-header">
+                        <div class="tech-icon-title">
+                            <i data-lucide="key-round"></i>
+                            <span class="tech-title">Laravel Permission</span>
+                        </div>
+                        <span class="tech-version">Spatie</span>
+                    </div>
+                    <p class="tech-desc">Package d'attribution et de contrôle des rôles et des autorisations fines (User, Author, Admin) associés à des middlewares de sécurité applicatifs.</p>
+                    <div class="tech-tags">
+                        <span class="tech-tag">Rôles</span>
+                        <span class="tech-tag">Permissions</span>
+                        <span class="tech-tag">Middlewares</span>
+                    </div>
+                </div>
+
+                <!-- DomPDF & PDFParser -->
+                <div class="tech-card">
+                    <div class="tech-header">
+                        <div class="tech-icon-title">
+                            <i data-lucide="file-text"></i>
+                            <span class="tech-title">Gestion des CV</span>
+                        </div>
+                        <span class="tech-version">PDF</span>
+                    </div>
+                    <p class="tech-desc">Outils avancés pour la gestion documentaire. Barryvdh DomPDF génère des fichiers PDF pour les CV en ligne. PDFParser extrait les textes des documents importés.</p>
+                    <div class="tech-tags">
+                        <span class="tech-tag">dompdf</span>
+                        <span class="tech-tag">pdfparser</span>
+                        <span class="tech-tag">Génération CV</span>
+                    </div>
+                </div>
+
+                <!-- Authentification Fortify -->
+                <div class="tech-card">
+                    <div class="tech-header">
+                        <div class="tech-icon-title">
+                            <i data-lucide="shield"></i>
+                            <span class="tech-title">Laravel Fortify</span>
+                        </div>
+                        <span class="tech-version">Fortify</span>
+                    </div>
+                    <p class="tech-desc">Moteur d'authentification agnostique. Prend en charge la gestion sécurisée des inscriptions, des connexions et de la réinitialisation des mots de passe.</p>
+                    <div class="tech-tags">
+                        <span class="tech-tag">Auth</span>
+                        <span class="tech-tag">Sécurité</span>
+                        <span class="tech-tag">Fortify</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- PANNEAU : FONCTIONNALITÉS -->
+        <section id="panel-features" class="section-panel">
+            <div class="feat-intro">
+                <h2>Fonctionnalités Principales</h2>
+                <p>JobLister regroupe une panoplie d'outils interconnectés pour offrir une expérience utilisateur haut de gamme aux candidats comme aux recruteurs.</p>
+            </div>
+
+            <div class="feat-grid">
+                <!-- Feature 1 -->
+                <div class="feat-card">
+                    <div class="feat-icon-box">
+                        <i data-lucide="search"></i>
+                    </div>
+                    <h3>Recherche Dynamique SPA</h3>
+                    <p>Recherche et filtrage instantanés d'offres d'emploi par ville, salaire, ou mot-clé. Interface développée sous forme d'application monopage (SPA) fluide en Vue.js pour éviter les rechargements de page.</p>
+                </div>
+
+                <!-- Feature 2 -->
+                <div class="feat-card">
+                    <div class="feat-icon-box">
+                        <i data-lucide="layout"></i>
+                    </div>
+                    <h3>Gestion d'Offres Employeurs</h3>
+                    <p>Section recruteur complète (Author). CRUD de gestion des offres d'emploi (créer, éditer, suspendre) et personnalisation détaillée du profil d'entreprise.</p>
+                </div>
+
+                <!-- Feature 3 -->
+                <div class="feat-card">
+                    <div class="feat-icon-box">
+                        <i data-lucide="file-output"></i>
+                    </div>
+                    <h3>Créateur de CV (CV Builder)</h3>
+                    <p>Interface intuitive permettant de renseigner ses diplômes, compétences et expériences pour générer et télécharger instantanément un CV professionnel sous format PDF.</p>
+                </div>
+
+                <!-- Feature 4 -->
+                <div class="feat-card">
+                    <div class="feat-icon-box">
+                        <i data-lucide="brain-circuit"></i>
+                    </div>
+                    <h3>Analyseur de CV</h3>
+                    <p>Outil d'analyse sémantique intégré. En extrayant le texte brut d'un fichier de CV PDF téléversé, la plateforme aide à analyser et faire correspondre les profils avec les besoins des recruteurs.</p>
+                </div>
+
+                <!-- Feature 5 -->
+                <div class="feat-card">
+                    <div class="feat-icon-box">
+                        <i data-lucide="user-check"></i>
+                    </div>
+                    <h3>Gestion des Candidatures</h3>
+                    <p>Suivi en temps réel des candidatures. Les candidats peuvent voir où ils ont postulé, et les employeurs peuvent télécharger les CV et trier les candidatures reçues dans leur dashboard.</p>
+                </div>
+
+                <!-- Feature 6 -->
+                <div class="feat-card">
+                    <div class="feat-icon-box">
+                        <i data-lucide="settings"></i>
+                    </div>
+                    <h3>Console d'Administration</h3>
+                    <p>Panneau de modération centralisé pour l'administrateur système. Permet de gérer la liste des utilisateurs, de supprimer des profils et d'administrer les secteurs d'activité (catégories).</p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Pied de Page -->
+    <footer>
+        <p>&copy; 2026 JobLister. Présentation technique de l'application.</p>
+        <p class="credits">Propulsé par Laravel 8, Vue.js et un design d'interface moderne.</p>
+    </footer>
+
+    <!-- Logique Interactive JS -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            
+            // --- Logique du changement d'onglets (Tabs) ---
+            const tabs = document.querySelectorAll('.nav-link');
+            const panels = document.querySelectorAll('.section-panel');
+
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    const target = tab.dataset.target;
+                    
+                    // Retirer la classe active de tous les onglets
+                    tabs.forEach(t => t.classList.remove('active'));
+                    // Retirer la classe active de tous les panneaux
+                    panels.forEach(p => p.classList.remove('active'));
+                    
+                    // Activer l'onglet cliqué et son panneau
+                    tab.classList.add('active');
+                    document.getElementById(target).classList.add('active');
+                });
+            });
+
+            // --- Logique interactive du Widget de Rôles ---
+            const roleCards = document.querySelectorAll('.role-card');
+            const roleTitle = document.getElementById('selected-role-title');
+            const roleDesc = document.getElementById('selected-role-desc');
+            const roleFeaturesList = document.getElementById('selected-role-features');
+
+            const roleDetails = {
+                candidate: {
+                    title: "Candidat (User)",
+                    desc: "Le rôle par défaut attribué lors de l'inscription. Axé sur la recherche active d'opportunités et la valorisation du profil.",
+                    features: [
+                        "Recherche d'offres en temps réel via la SPA Vue.js",
+                        "Candidature en ligne avec dépôt de CV",
+                        "Sauvegarde des offres favorites (My Saved Jobs)",
+                        "Accès au CV Builder (génération de CV PDF)",
+                        "Accès à l'outil d'analyse de CV",
+                        "Demande de surclassement pour devenir Employeur"
+                    ]
+                },
+                employer: {
+                    title: "Employeur (Author)",
+                    desc: "Destiné aux entreprises et recruteurs pour publier et gérer l'ensemble de leurs opportunités de recrutement.",
+                    features: [
+                        "Accès à la section Auteur et son tableau de bord dédié",
+                        "Création, édition et suppression d'offres d'emploi (CRUD)",
+                        "Gestion complète de la fiche et des informations d'entreprise",
+                        "Visualisation et tri des candidatures reçues",
+                        "Téléchargement direct des CV de candidats en format PDF"
+                    ]
+                },
+                admin: {
+                    title: "Administrateur (Admin)",
+                    desc: "Privilèges complets d'administration permettant d'assurer la modération globale de la plateforme.",
+                    features: [
+                        "Dashboard d'administration complet avec métriques globales",
+                        "Visualisation et suppression de tous les comptes inscrits",
+                        "Gestion des catégories professionnelles / secteurs (CRUD)",
+                        "Modération préventive ou curative des publications"
+                    ]
+                }
+            };
+
+            roleCards.forEach(card => {
+                card.addEventListener('click', () => {
+                    roleCards.forEach(c => c.classList.remove('active'));
+                    card.classList.add('active');
+                    
+                    const role = card.dataset.role;
+                    const data = roleDetails[role];
+                    
+                    roleTitle.innerText = data.title;
+                    roleDesc.innerText = data.desc;
+                    
+                    roleFeaturesList.innerHTML = '';
+                    data.features.forEach(feat => {
+                        const li = document.createElement('li');
+                        li.innerHTML = `<span class="bullet"></span>${feat}`;
+                        roleFeaturesList.appendChild(li);
+                    });
+                });
+            });
+
+            // --- Logique de l'Explorateur de Structure ---
+            const treeNodes = document.querySelectorAll('.tree-node-title');
+            const structTitle = document.getElementById('struct-detail-title');
+            const structDesc = document.getElementById('struct-detail-desc');
+            
+            const structDetails = {
+                'root-app': "Le dossier <strong>app/</strong> est le noyau de l'application Laravel. Il contient la logique métier de l'application JobLister, incluant les contrôleurs, les modèles de données et les fournisseurs de services.",
+                'app-controllers': "Le dossier <strong>Http/Controllers/</strong> contient les contrôleurs de l'application. Ceux-ci orchestrent les requêtes HTTP : <br><br>• <strong>AccountController</strong>: Gère l'authentification Fortify, le profil, le CV Builder (DomPDF) et l'analyseur.<br>• <strong>PostController</strong>: Gère les pages publiques de listing des offres d'emploi.<br>• <strong>JobApplicationController</strong>: Permet aux employeurs de voir et trier les candidatures.",
+                'app-models': "Le dossier <strong>Models/</strong> contient les classes de données Eloquent représentant les tables MySQL de JobLister :<br><br>• <strong>User.php</strong>: Gère les informations utilisateur et les rôles.<br>• <strong>Post.php</strong>: Représente une offre d'emploi avec ses critères.<br>• <strong>Company.php</strong>: Représente le profil de l'employeur.<br>• <strong>JobApplication.php</strong>: Lie les candidats à leurs candidatures.",
+                'root-bootstrap': "Le dossier <strong>bootstrap/</strong> contient les scripts d'initialisation de Laravel, notamment <code>app.php</code> qui configure le chargement des services et <code>cache/</code> pour optimiser les performances lors de l'exécution.",
+                'root-config': "Le dossier <strong>config/</strong> rassemble tous les fichiers de configuration de l'application. On y configure notamment la base de données (MySQL), l'authentification Fortify, les services tiers, et l'autorisation Spatie Permission.",
+                'root-database': "Le dossier <strong>database/</strong> contient les migrations de base de données (fichiers qui créent les tables SQL) et les seeders qui injectent des jeux de données d'exemple (comptes de démonstration, fausses entreprises, offres d'emploi fictives).",
+                'root-public': "Le dossier <strong>public/</strong> est la racine web publique de l'application. Il contient le point d'entrée <code>index.php</code>, ainsi que les fichiers CSS/JS compilés via Laravel Mix, et les ressources statiques comme le logo du projet.",
+                'root-resources': "Le dossier <strong>resources/</strong> contient tous les fichiers frontend bruts avant compilation : les fichiers de style SASS/CSS, le code JavaScript (composants Vue.js/React) et les modèles de page Blade.",
+                'res-js': "Le dossier <strong>js/</strong> contient les scripts et composants JavaScript. Dans JobLister, Vue.js y est configuré pour faire tourner l'interface de recherche d'offres en SPA (Single Page Application) rapide et interactive.",
+                'res-views': "Le dossier <strong>views/</strong> contient les fichiers de template Laravel Blade (squelettes HTML dynamiques) utilisés pour restituer les tableaux de bord Admin et Employeur, la navigation principale et les pages statiques.",
+                'root-routes': "Le dossier <strong>routes/</strong> contient les fichiers de routage. Le fichier <strong>web.php</strong> y est crucial : il mappe les URLs du navigateur vers les méthodes des contrôleurs de l'application, et y applique la sécurité (middlewares auth et rôles)."
+            };
+
+            treeNodes.forEach(node => {
+                node.addEventListener('click', () => {
+                    treeNodes.forEach(n => n.classList.remove('active'));
+                    node.classList.add('active');
+                    
+                    const item = node.dataset.item;
+                    const text = structDetails[item] || "Sélectionnez un dossier ou fichier pour afficher les détails.";
+                    
+                    structTitle.innerText = node.innerText.trim();
+                    structDesc.innerHTML = text;
+                });
+            });
+
+            // Initialiser les icônes Lucide
+            lucide.createIcons();
+        });
+    </script>
+</body>
+</html>

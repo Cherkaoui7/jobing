@@ -1,24 +1,22 @@
-import JobComponent from "./components/JobComponent";
+import React from "react";
+
+import Home from "./pages/Home";
+import Jobs from "./pages/Jobs";
 import Organization from "./pages/Organization";
-import JobCategory from "./pages/JobCategory";
-import JobTitle from "./pages/JobTitle";
 
 const routes = [
     {
         path: "/",
-        component: JobComponent
+        element: <Home />
     },
     {
-        path: "/jobs-by-organization",
-        component: Organization
+        path: "/jobs",
+        element: <Jobs />
     },
     {
-        path: "/jobs-by-title",
-        component: JobTitle
-    },
-    {
-        path: "/jobs-by-category",
-        component: JobCategory
+        path: "/organization",
+        element: <Organization />
     }
 ];
+
 export default routes;

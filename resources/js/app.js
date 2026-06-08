@@ -1,25 +1,15 @@
 require("./bootstrap");
 
-window.Vue = require("vue");
+import React from "react";
+import ReactDOM from "react-dom/client";
+import { BrowserRouter as Router } from "react-router-dom";
 
-require("./progressbar");
+import AppComponent from "./components/AppComponent.jsx";
 
-import VueRouter from "vue-router";
-Vue.use(VueRouter);
+const root = ReactDOM.createRoot(document.getElementById("app"));
 
-import routes from "./routes";
-const router = new VueRouter({
-    routes,
-    mode: "hash"
-});
-
-Vue.component(
-    "app-component",
-    require("./components/AppComponent.vue").default
+root.render(
+    <Router>
+        <AppComponent />
+    </Router>
 );
-Vue.component("pagination", require("laravel-vue-pagination"));
-
-const app = new Vue({
-    el: "#app",
-    router
-});

@@ -10,6 +10,9 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use RealRashid\SweetAlert\Facades\Alert;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Smalot\PdfParser\Parser;
+use Illuminate\Support\Facades\Http;
 
 class AccountController extends Controller
 {
@@ -51,21 +54,34 @@ class AccountController extends Controller
     }
 
     public function applyJob(Request $request)
-    {
-        $application = new JobApplication;
-        $user = User::find(auth()->user()->id);
+{
+    $request->validate([
+        'cv' => 'required|mimes:pdf,doc,docx|max:2048'
+    ]);
 
-        if ($this->hasApplied($user, $request->post_id)) {
-            Alert::toast('You have already applied for this job!', 'success');
-            return redirect()->route('post.show', ['job' => $request->post_id]);
-        }
+    $application = new JobApplication;
+    $user = User::find(auth()->user()->id);
 
-        $application->user_id = auth()->user()->id;
-        $application->post_id = $request->post_id;
-        $application->save();
-        Alert::toast('Thank you for applying! Wait for the company to respond!', 'success');
+    if ($this->hasApplied($user, $request->post_id)) {
+        Alert::toast('You have already applied for this job!', 'success');
         return redirect()->route('post.show', ['job' => $request->post_id]);
     }
+
+    // upload cv
+    $cvName = time() . '_' . $request->file('cv')->getClientOriginalName();
+
+    $request->file('cv')->move(public_path('uploads/cv'), $cvName);
+
+    $application->user_id = auth()->user()->id;
+    $application->post_id = $request->post_id;
+    $application->cv = 'uploads/cv/' . $cvName;
+
+    $application->save();
+
+    Alert::toast('Application sent successfully!', 'success');
+
+    return redirect()->route('post.show', ['job' => $request->post_id]);
+}
 
     public function changePasswordView()
     {
@@ -125,6 +141,56 @@ class AccountController extends Controller
             return view('account.deactivate');
         }
     }
+public function updateProfile(Request $request)
+{
+    $user = auth()->user();
+
+    $request->validate([
+        'name' => 'required|max:255',
+        'phone' => 'nullable|max:255',
+        'city' => 'nullable|max:255',
+        'bio' => 'nullable',
+        'skills' => 'nullable',
+        'linkedin' => 'nullable',
+        'github' => 'nullable',
+        'image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+        'cv' => 'nullable|mimes:pdf,doc,docx|max:2048'
+    ]);
+
+    // upload image
+    if ($request->hasFile('image')) {
+
+        $imageName = time().'_'.$request->image->getClientOriginalName();
+
+        $request->image->move(public_path('uploads/profile'), $imageName);
+
+        $user->image = 'uploads/profile/'.$imageName;
+    }
+
+    // upload cv
+    if ($request->hasFile('cv')) {
+
+        $cvName = time().'_'.$request->cv->getClientOriginalName();
+
+        $request->cv->move(public_path('uploads/cv'), $cvName);
+
+        $user->cv = 'uploads/cv/'.$cvName;
+    }
+
+    $user->name = $request->name;
+    $user->phone = $request->phone;
+    $user->city = $request->city;
+    $user->bio = $request->bio;
+    $user->skills = $request->skills;
+    $user->linkedin = $request->linkedin;
+    $user->github = $request->github;
+
+    $user->save();
+
+    Alert::toast('Profile updated successfully!', 'success');
+
+    return redirect()->back();
+}
 
     public function logout()
     {
@@ -141,4 +207,120 @@ class AccountController extends Controller
             return false;
         }
     }
+    public function cvBuilder()
+{
+    return view('account.cv-builder');
+}
+
+public function generateCV(Request $request)
+{
+    $data = [
+        'name' => $request->name,
+        'email' => $request->email,
+        'phone' => $request->phone,
+        'city' => $request->city,
+        'skills' => $request->skills,
+        'experience' => $request->experience,
+        'education' => $request->education,
+        'bio' => $request->bio,
+    ];
+
+    $pdf = Pdf::loadView('account.cv-pdf', $data);
+
+    return $pdf->download('careerhub-cv.pdf');
+}
+
+public function resumeAnalyzer()
+{
+    return view('account.resume-analyzer');
+}
+
+public function analyzeResume(Request $request)
+{
+    $request->validate([
+        'cv' => 'required|mimes:pdf,txt|max:2048'
+    ]);
+
+    $file = $request->file('cv');
+
+    // استخراج النص من PDF
+    if ($file->getClientOriginalExtension() == 'pdf') {
+
+        $parser = new \Smalot\PdfParser\Parser();
+
+        $pdf = $parser->parseFile($file->getRealPath());
+
+        $content = strtolower($pdf->getText());
+
+    } else {
+
+        $content = strtolower(file_get_contents($file->getRealPath()));
+    }
+
+    // Skills database
+    $skills = [
+        'php',
+        'laravel',
+        'mysql',
+        'javascript',
+        'vue',
+        'react',
+        'html',
+        'css',
+        'bootstrap',
+        'tailwind',
+        'git',
+        'github',
+        'api',
+        'docker',
+        'python',
+        'java',
+        'c++',
+        'nodejs'
+    ];
+
+    $detectedSkills = [];
+    $missingSkills = [];
+
+    foreach ($skills as $skill) {
+
+        if (str_contains($content, $skill)) {
+
+            $detectedSkills[] = $skill;
+
+        } else {
+
+            $missingSkills[] = $skill;
+        }
+    }
+
+    // ATS Score
+    $score = count($detectedSkills) * 5;
+
+    if ($score > 100) {
+        $score = 100;
+    }
+
+    // Recommendations
+    $recommendations = [];
+
+    if (!in_array('docker', $detectedSkills)) {
+        $recommendations[] = 'Learn Docker and deployment.';
+    }
+
+    if (!in_array('react', $detectedSkills)) {
+        $recommendations[] = 'Add modern frontend framework skills.';
+    }
+
+    if (!in_array('api', $detectedSkills)) {
+        $recommendations[] = 'Mention API development experience.';
+    }
+
+    return view('account.resume-result', compact(
+        'score',
+        'detectedSkills',
+        'missingSkills',
+        'recommendations'
+    ));
+}
 }

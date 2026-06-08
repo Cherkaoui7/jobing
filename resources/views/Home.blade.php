@@ -1,112 +1,225 @@
 @extends('layouts.post')
 
 @section('content')
-  <section class="home-page pt-4">
+
+<section class="modern-home">
+
     <div class="container">
-      <form action="{{route('job.index')}}">
-        <div class="row">
-          <div class="col-sm-12 col-md-6">
-            <div class="px-4">
-              <div class="rounded-text">
-                <p>
-                  Find jobs, vacancy, career online.
-                </p>
-              </div>
-              <div class="home-search-bar">
-                  <input type="text" name="q" placeholder="Search Job By Title" class="home-search-input form-control">
-                  <button type="submit" class="secondary-btn"><i class="fas fa-search"></i></button>
-              </div>
-            </div>
-          </div>
-          <div class="col-sm-12 col-md-6">
-            <div class="py-5 px-5 text-center">
-              <div class="text-light">
-                <h4>A dream doesn't become reality through magic, it takes sweat, determination and hard work.
-              </h4>
-              </div>
-            </div>
-            </div>
-        </div>   
-      </form>
-    </div>
-  </section>
-  
-  {{-- jobs list --}}
-  <section class="jobs-section py-5">
-    <div class="container-fluid px-0">
-      <div class="row ">
-        <div class="col-sm-12 col-md-7 ml-auto">
-          <div class="card">
-            <div class="card-header">
-              <p class="card-title font-weight-bold"><i class="fas fa-briefcase"></i> Top jobs</p>
-            </div>
-            <div class="card-body">
-              <div class="top-jobs" >
-                <div class="row">
 
-                  @foreach ($posts as $post)
-                    @if ($post->company)
-                    <div class="col-sm-6 col-md-6 col-lg-4 col-sm-6 mb-sm-3">
-                      <a href="{{route('post.show',['job'=>$post->id])}}">
-                      <div class="job-item border row h-100">
-                        <div class="col-xs-3 col-sm-4 col-md-5">
-                          <img src="{{asset($post->company->logo)}}" alt="job listings" class="img-fluid p-2">
+        <div class="hero-section">
+
+            <div class="row align-items-center">
+
+                <div class="col-lg-6">
+
+                    <div class="hero-content">
+
+                        <span class="hero-badge">
+                            🚀 AI Powered Recruitment Platform
+                        </span>
+
+                        <h1 class="hero-title">
+                            Find Your Dream Job With Smart Matching
+                        </h1>
+
+                        <p class="hero-text">
+                            Discover thousands of opportunities, build ATS-ready CVs,
+                            analyze resumes and get hired faster.
+                        </p>
+
+                        <form action="{{route('job.index')}}" method="GET">
+
+                            <div class="hero-search">
+
+                                <input 
+                                    type="text"
+                                    name="q"
+                                    class="form-control"
+                                    placeholder="Search jobs, companies, skills..."
+                                >
+
+                                <button type="submit">
+                                    <i class="fas fa-search"></i>
+                                </button>
+
+                            </div>
+
+                        </form>
+
+                        <div class="hero-stats">
+
+                            <div class="stat-box">
+                                <h3>10K+</h3>
+                                <p>Jobs</p>
+                            </div>
+
+                            <div class="stat-box">
+                                <h3>5K+</h3>
+                                <p>Companies</p>
+                            </div>
+
+                            <div class="stat-box">
+                                <h3>20K+</h3>
+                                <p>Candidates</p>
+                            </div>
+
                         </div>
-                        <div class="job-description col-xs-9 col-sm-8 col-md-7">
-                        <p class="company-name" title="{{$post->company->title}}">{{$post->company->title}}</p>
-                          <ul class="company-listings">
-                            <li>•{{substr($post->job_title, 0, 27)}}</li>
-                        </ul>
-                        </div>
-                      </div>
-                      </a>
+
                     </div>
-                    @endif
-                  @endforeach
 
-                 </div>
-               </div>
-              </div>
-              <a class="btn secondary-btn" href="{{route('job.index')}}">Show all jobs</a>
-            </div>
-          </div>
-       
-        <div class="col-sm-12 col-md-3 mr-auto">
-
-          <div class="card mb-4">
-            <div class="card-header">
-              <p class="font-weight-bold"><i class="fas fa-building"></i> Top Employers</p>
-            </div>
-            <div class="card-body">
-              <div class="top-employers">
-              @foreach ($topEmployers as $employer)
-                <div class="top-employer">
-                  <a href="{{route('account.employer',['employer'=>$employer])}}">
-                    <img src="{{asset($employer->logo)}}" width="60px" class="img-fluid" alt="">
-                  </a>
-                </div> 
-              @endforeach
-              </div>
-            </div>
-          </div>
-
-            <div class="card mb-4 job-by-category">
-              <div class="card-header">
-                <p class="font-weight-bold"><i class="fab fa-typo3"></i> Jobs By Category</p>
-              </div>
-              <div class="card-body">
-                <div class="jobs-category mb-3 mt-0">
-                  @foreach ($categories as $category)
-                  <div class="hover-shadow p-1"><a href="{{URL::to('search?category_id='.$category->id)}}" class="text-muted">{{$category->category_name}}</a> </div>
-                  @endforeach
-                  <a class="p-1 text-info" href="{{route('job.index')}}">More..</a>
                 </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-@endsection
 
+                <div class="col-lg-6">
+
+                    <div class="hero-image">
+
+                        <img 
+                            src="{{asset('images/user-profile.jpg')}}"
+                            class="img-fluid"
+                            alt=""
+                        >
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<section class="jobs-section">
+
+    <div class="container">
+
+        <div class="section-title d-flex justify-content-between align-items-center mb-5">
+
+            <div>
+                <h2>🔥 Featured Jobs</h2>
+                <p>Latest AI matched opportunities</p>
+            </div>
+
+            <a href="{{route('job.index')}}" class="view-all-btn">
+                View All Jobs
+            </a>
+
+        </div>
+
+        <div class="row g-4">
+
+            @foreach ($posts as $post)
+
+                @if ($post->company)
+
+                <div class="col-lg-4 col-md-6">
+
+                    <a href="{{route('post.show',['job'=>$post->id])}}" class="job-card-link">
+
+                        <div class="modern-job-card">
+
+                            <div class="job-top">
+
+                                <img 
+                                    src="{{asset($post->company->logo)}}"
+                                    class="company-logo"
+                                    alt=""
+                                >
+
+                                <span class="job-badge">
+                                    New
+                                </span>
+
+                            </div>
+
+                            <h3 class="job-title">
+                                {{$post->job_title}}
+                            </h3>
+
+                            <p class="company-name">
+                                {{$post->company->title}}
+                            </p>
+
+                            <div class="job-tags">
+
+                                <span>{{$post->employment_type}}</span>
+
+                                <span>{{$post->job_level}}</span>
+
+                            </div>
+
+                            <div class="job-footer">
+
+                                <span>
+                                    <i class="fas fa-map-marker-alt"></i>
+                                    {{$post->job_location}}
+                                </span>
+
+                                <span class="salary">
+                                    {{$post->salary}}
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                    </a>
+
+                </div>
+
+                @endif
+
+            @endforeach
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<section class="categories-section">
+
+    <div class="container">
+
+        <div class="text-center mb-5">
+
+            <h2>Browse Categories</h2>
+
+            <p>Explore jobs by industries</p>
+
+        </div>
+
+        <div class="row">
+
+            @foreach ($categories as $category)
+
+            <div class="col-lg-3 col-md-4 col-6 mb-4">
+
+                <a 
+                    href="{{URL::to('search?category_id='.$category->id)}}"
+                    class="category-card"
+                >
+
+                    <div class="category-icon">
+                        <i class="fas fa-briefcase"></i>
+                    </div>
+
+                    <h5>{{$category->category_name}}</h5>
+
+                </a>
+
+            </div>
+
+            @endforeach
+
+        </div>
+
+    </div>
+
+</section>
+
+@endsection
