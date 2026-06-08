@@ -1,0 +1,925 @@
+<!DOCTYPE html>
+<html lang="fr" class="lang-fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JobLister — Guide d'Installation Local</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Lucide Icons CDN -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        :root {
+            --bg-color: #0b0f19;
+            --card-bg: rgba(17, 24, 39, 0.6);
+            --card-border: rgba(255, 255, 255, 0.08);
+            --card-hover-border: rgba(16, 185, 129, 0.4); /* Emerald accent */
+            --text-main: #cbd5e1;
+            --text-muted: #9ca3af;
+            --text-bright: #ffffff;
+            --primary: #10b981; /* Emerald */
+            --primary-glow: rgba(16, 185, 129, 0.15);
+            --secondary: #6366f1; /* Indigo */
+            --secondary-glow: rgba(99, 102, 241, 0.15);
+            --code-bg: #070a13;
+            --font-outfit: 'Outfit', sans-serif;
+            --font-inter: 'Inter', sans-serif;
+        }
+
+        /* Lang Toggles */
+        .lang-fr .en-content { display: none !important; }
+        .lang-en .fr-content { display: none !important; }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: var(--font-inter);
+            line-height: 1.6;
+            overflow-x: hidden;
+            min-height: 100vh;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(16, 185, 129, 0.05) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(99, 102, 241, 0.05) 0%, transparent 40%);
+            background-attachment: fixed;
+        }
+
+        h1, h2, h3, h4 {
+            font-family: var(--font-outfit);
+            color: var(--text-bright);
+            font-weight: 700;
+        }
+
+        /* --- En-tête / Barre de navigation --- */
+        .navbar {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(11, 15, 25, 0.85);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--card-border);
+            padding: 1.2rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            font-size: 1.6rem;
+            font-weight: 800;
+            font-family: var(--font-outfit);
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-decoration: none;
+        }
+
+        .nav-logo svg {
+            stroke: var(--primary);
+        }
+
+        .lang-toggle {
+            display: flex;
+            gap: 0.2rem;
+            background: rgba(255, 255, 255, 0.03);
+            padding: 0.3rem;
+            border-radius: 9999px;
+            border: 1px solid var(--card-border);
+        }
+
+        .lang-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            padding: 0.4rem 0.8rem;
+            border-radius: 9999px;
+            font-weight: 700;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .lang-btn.active {
+            background: var(--primary);
+            color: var(--bg-color);
+        }
+
+        /* --- Section Hero --- */
+        .hero {
+            padding: 4rem 2rem 2rem 2rem;
+            max-width: 1000px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .hero-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.4rem 1.2rem;
+            background: var(--primary-glow);
+            border: 1px solid rgba(16, 185, 129, 0.25);
+            border-radius: 9999px;
+            color: var(--primary);
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-family: var(--font-outfit);
+        }
+
+        .hero h1 {
+            font-size: 3.2rem;
+            line-height: 1.15;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #ffffff 40%, #a7f3d0 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -0.02em;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            color: var(--text-muted);
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        /* --- Conteneur Général --- */
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 2rem 5rem 2rem;
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 2.5rem;
+        }
+
+        @media (max-width: 900px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+            .sidebar {
+                display: none;
+            }
+        }
+
+        /* --- Sidebar Navigation --- */
+        .sidebar {
+            position: sticky;
+            top: 100px;
+            height: fit-content;
+        }
+
+        .timeline-menu {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            position: relative;
+        }
+
+        .timeline-menu::before {
+            content: '';
+            position: absolute;
+            left: 17px;
+            top: 10px;
+            bottom: 10px;
+            width: 2px;
+            background: var(--card-border);
+            z-index: 1;
+        }
+
+        .timeline-item-btn {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.6rem 1rem;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-family: var(--font-outfit);
+            font-weight: 500;
+            border-radius: 8px;
+            transition: all 0.3s;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            width: 100%;
+            text-align: left;
+            position: relative;
+            z-index: 2;
+        }
+
+        .timeline-item-btn:hover {
+            color: var(--text-bright);
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .timeline-circle {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--bg-color);
+            border: 2px solid var(--text-muted);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+            margin-left: 6px;
+        }
+
+        .timeline-item-btn.active {
+            color: var(--primary);
+            font-weight: 700;
+        }
+
+        .timeline-item-btn.active .timeline-circle {
+            border-color: var(--primary);
+            background: var(--primary);
+            box-shadow: 0 0 8px var(--primary);
+        }
+
+        /* --- Main Setup Flow --- */
+        .setup-flow {
+            display: flex;
+            flex-direction: column;
+            gap: 3rem;
+        }
+
+        .step-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            padding: 2.2rem;
+            backdrop-filter: blur(16px);
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
+            scroll-margin-top: 100px;
+        }
+
+        .step-card:hover {
+            border-color: var(--card-hover-border);
+            box-shadow: 0 20px 40px -15px rgba(16, 185, 129, 0.15);
+        }
+
+        .step-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.2rem;
+        }
+
+        .step-number {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: var(--primary-glow);
+            color: var(--primary);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-family: var(--font-outfit);
+            font-size: 1.1rem;
+        }
+
+        .step-card h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .step-card p {
+            font-size: 1rem;
+            color: var(--text-main);
+            margin-bottom: 1.5rem;
+        }
+
+        /* Code Block Copy Widget */
+        .code-container {
+            position: relative;
+            background: var(--code-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            margin-bottom: 1rem;
+            padding: 1.2rem;
+            overflow-x: auto;
+        }
+
+        .code-container pre {
+            font-family: 'Consolas', 'Courier New', Courier, monospace;
+            font-size: 0.9rem;
+            color: #a7f3d0;
+            margin: 0;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+
+        .copy-btn {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--card-border);
+            border-radius: 6px;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .copy-btn:hover {
+            color: var(--text-bright);
+            background: rgba(255, 255, 255, 0.08);
+            border-color: var(--primary);
+        }
+
+        /* ENV configuration simulation */
+        .env-simulation {
+            background: #0f172a;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 1.2rem;
+            font-family: 'Consolas', monospace;
+            font-size: 0.85rem;
+            color: #94a3b8;
+            margin-top: 1.2rem;
+        }
+
+        .env-line {
+            margin-bottom: 0.25rem;
+        }
+
+        .env-highlight {
+            color: #38bdf8;
+            font-weight: 700;
+            background: rgba(56, 189, 248, 0.08);
+            padding: 0 0.3rem;
+            border-radius: 4px;
+        }
+
+        .env-comment {
+            color: #64748b;
+        }
+
+        /* Prerequisites Card */
+        .prereq-card {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.02) 0%, rgba(99, 102, 241, 0.02) 100%);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            padding: 2.2rem;
+            margin-bottom: 2rem;
+        }
+
+        .prereq-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.2rem;
+            margin-top: 1.2rem;
+        }
+
+        .prereq-item {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            background: rgba(255, 255, 255, 0.02);
+            padding: 1rem;
+            border-radius: 12px;
+            border: 1px solid var(--card-border);
+        }
+
+        .prereq-item i {
+            color: var(--primary);
+        }
+
+        .prereq-name {
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: var(--text-bright);
+        }
+
+        .prereq-version {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        /* Troubleshooting Section */
+        .trouble-section {
+            background: rgba(239, 68, 68, 0.02);
+            border: 1px solid rgba(239, 68, 68, 0.15);
+        }
+
+        .trouble-section:hover {
+            border-color: rgba(239, 68, 68, 0.3);
+            box-shadow: 0 20px 40px -15px rgba(239, 68, 68, 0.1);
+        }
+
+        .trouble-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            color: #ef4444;
+        }
+
+        .trouble-header i {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: rgba(239, 68, 68, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid rgba(239, 68, 68, 0.2);
+        }
+
+        .trouble-item {
+            margin-bottom: 1.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+        }
+
+        .trouble-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .trouble-title {
+            font-weight: 700;
+            color: var(--text-bright);
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .trouble-solution {
+            font-size: 0.95rem;
+            color: var(--text-main);
+            padding-left: 1.5rem;
+            border-left: 2px solid rgba(259, 68, 68, 0.3);
+        }
+
+        /* --- Footer --- */
+        footer {
+            margin-top: 5rem;
+            padding: 3rem 2rem;
+            background: rgba(7, 10, 17, 0.9);
+            border-top: 1px solid var(--card-border);
+            text-align: center;
+        }
+
+        footer p {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Barre de Navigation -->
+    <nav class="navbar">
+        <a href="#" class="nav-logo">
+            <i data-lucide="terminal"></i> JobLister Setup
+        </a>
+        <div class="lang-toggle">
+            <button id="btn-fr" class="lang-btn active">FR</button>
+            <button id="btn-en" class="lang-btn">EN</button>
+        </div>
+    </nav>
+
+    <!-- Zone Hero -->
+    <header class="hero">
+        <div class="hero-tag">
+            <i data-lucide="git-branch"></i> Git Clone & Run
+        </div>
+        <h1 class="fr-content">Guide de Démarrage Local</h1>
+        <h1 class="en-content">Local Setup & Launch Guide</h1>
+        
+        <p class="fr-content">Suivez ces étapes pour lancer l'application JobLister sur votre serveur de développement local.</p>
+        <p class="en-content">Follow these steps to run the JobLister application on your local development server.</p>
+    </header>
+
+    <!-- Zone principale -->
+    <main class="container">
+
+        <!-- Barre latérale : Sommaire temporel -->
+        <aside class="sidebar">
+            <ul class="timeline-menu">
+                <li>
+                    <button class="timeline-item-btn active" data-step="step-clone">
+                        <span class="timeline-circle"></span>
+                        <span class="fr-content">1. Récupération</span>
+                        <span class="en-content">1. Cloning</span>
+                    </button>
+                </li>
+                <li>
+                    <button class="timeline-item-btn" data-step="step-env">
+                        <span class="timeline-circle"></span>
+                        <span class="fr-content">2. Fichier .env</span>
+                        <span class="en-content">2. .env File</span>
+                    </button>
+                </li>
+                <li>
+                    <button class="timeline-item-btn" data-step="step-vendor">
+                        <span class="timeline-circle"></span>
+                        <span class="fr-content">3. Dépendances</span>
+                        <span class="en-content">3. Dependencies</span>
+                    </button>
+                </li>
+                <li>
+                    <button class="timeline-item-btn" data-step="step-build">
+                        <span class="timeline-circle"></span>
+                        <span class="fr-content">4. Clé & Assets</span>
+                        <span class="en-content">4. Key & Assets</span>
+                    </button>
+                </li>
+                <li>
+                    <button class="timeline-item-btn" data-step="step-db">
+                        <span class="timeline-circle"></span>
+                        <span class="fr-content">5. Base de données</span>
+                        <span class="en-content">5. Database</span>
+                    </button>
+                </li>
+                <li>
+                    <button class="timeline-item-btn" data-step="step-serve">
+                        <span class="timeline-circle"></span>
+                        <span class="fr-content">6. Lancement</span>
+                        <span class="en-content">6. Running</span>
+                    </button>
+                </li>
+                <li>
+                    <button class="timeline-item-btn" data-step="step-trouble" style="color: #ef4444;">
+                        <span class="timeline-circle" style="border-color: #ef4444;"></span>
+                        <span class="fr-content">Dépannage</span>
+                        <span class="en-content">Troubleshooting</span>
+                    </button>
+                </li>
+            </ul>
+        </aside>
+
+        <!-- Liste des instructions -->
+        <div class="setup-flow">
+
+            <!-- PRÉREQUIS -->
+            <section class="prereq-card">
+                <h3 class="fr-content"><i data-lucide="check-square"></i> Prérequis Système</h3>
+                <h3 class="en-content"><i data-lucide="check-square"></i> System Prerequisites</h3>
+                
+                <p class="fr-content">Assurez-vous d'avoir installé les logiciels suivants avant de commencer :</p>
+                <p class="en-content">Ensure you have the following software installed before beginning:</p>
+
+                <div class="prereq-grid">
+                    <div class="prereq-item">
+                        <i data-lucide="code-2"></i>
+                        <div>
+                            <div class="prereq-name">PHP</div>
+                            <div class="prereq-version">^8.2</div>
+                        </div>
+                    </div>
+                    <div class="prereq-item">
+                        <i data-lucide="box"></i>
+                        <div>
+                            <div class="prereq-name">Composer</div>
+                            <div class="prereq-version">Recommandé</div>
+                        </div>
+                    </div>
+                    <div class="prereq-item">
+                        <i data-lucide="file-json"></i>
+                        <div>
+                            <div class="prereq-name">Node.js / NPM</div>
+                            <div class="prereq-version">v16+ / NPM v8+</div>
+                        </div>
+                    </div>
+                    <div class="prereq-item">
+                        <i data-lucide="database"></i>
+                        <div>
+                            <div class="prereq-name">MySQL / MariaDB</div>
+                            <div class="prereq-version">Port 3306</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ÉTAPE 1 : CLONE -->
+            <section id="step-clone" class="step-card">
+                <div class="step-header">
+                    <div class="step-number">1</div>
+                    <h2 class="fr-content">Cloner le Projet</h2>
+                    <h2 class="en-content">Clone the Repository</h2>
+                </div>
+                
+                <p class="fr-content">Commencez par récupérer le dépôt Git localement en exécutant les commandes ci-dessous dans votre terminal :</p>
+                <p class="en-content">Begin by cloning the Git repository locally by running the commands below in your terminal:</p>
+
+                <div class="code-container">
+                    <pre><code id="cmd-clone">git clone https://github.com/Cherkaoui7/jobing.git</code></pre>
+                    <button class="copy-btn" onclick="copyToClipboard('cmd-clone')">
+                        <i data-lucide="copy"></i>
+                    </button>
+                </div>
+
+                <div class="code-container">
+                    <pre><code id="cmd-cd">cd jobing</code></pre>
+                    <button class="copy-btn" onclick="copyToClipboard('cmd-cd')">
+                        <i data-lucide="copy"></i>
+                    </button>
+                </div>
+            </section>
+
+            <!-- ÉTAPE 2 : ENV -->
+            <section id="step-env" class="step-card">
+                <div class="step-header">
+                    <div class="step-number">2</div>
+                    <h2 class="fr-content">Configurer le Fichier .env</h2>
+                    <h2 class="en-content">Configure the .env File</h2>
+                </div>
+                
+                <p class="fr-content">Dupliquez le fichier exemple pour créer votre propre fichier de configuration locale <code>.env</code> :</p>
+                <p class="en-content">Duplicate the example configuration file to create your local <code>.env</code> file:</p>
+
+                <div class="code-container">
+                    <pre><code id="cmd-copy-env">copy .env.example .env</code></pre>
+                    <button class="copy-btn" onclick="copyToClipboard('cmd-copy-env')">
+                        <i data-lucide="copy"></i>
+                    </button>
+                </div>
+                <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: -0.5rem; font-style: italic;">
+                    <span class="fr-content">Note : Sous macOS / Linux, utilisez plutôt : <code>cp .env.example .env</code></span>
+                    <span class="en-content">Note: On macOS / Linux, use instead: <code>cp .env.example .env</code></span>
+                </p>
+
+                <p class="fr-content">Modifiez ensuite les lignes de configuration de base de données dans votre fichier <code>.env</code> avec vos accès MySQL :</p>
+                <p class="en-content">Next, open the <code>.env</code> file and configure your database parameters as shown below:</p>
+
+                <div class="env-simulation">
+                    <div class="env-line"><span class="env-comment"># Paramètres de base de données</span></div>
+                    <div class="env-line">DB_CONNECTION=mysql</div>
+                    <div class="env-line">DB_HOST=127.0.0.1</div>
+                    <div class="env-line">DB_PORT=3306</div>
+                    <div class="env-line">DB_DATABASE=<span class="env-highlight">job_lister</span></div>
+                    <div class="env-line">DB_USERNAME=<span class="env-highlight">root</span></div>
+                    <div class="env-line">DB_PASSWORD=<span class="env-highlight"></span> <span class="env-comment">(Laissez vide si aucun mot de passe)</span></div>
+                </div>
+            </section>
+
+            <!-- ÉTAPE 3 : DÉPENDANCES -->
+            <section id="step-vendor" class="step-card">
+                <div class="step-header">
+                    <div class="step-number">3</div>
+                    <h2 class="fr-content">Installer les Dépendances</h2>
+                    <h2 class="en-content">Install Dependencies</h2>
+                </div>
+                
+                <p class="fr-content">Installez les dépendances PHP (Laravel) et les dépendances JavaScript (React / Vue / BootStrap) :</p>
+                <p class="en-content">Install the PHP packages (Laravel dependencies) and JavaScript packages (Vue/React assets):</p>
+
+                <div class="code-container">
+                    <pre><code id="cmd-composer">composer install</code></pre>
+                    <button class="copy-btn" onclick="copyToClipboard('cmd-composer')">
+                        <i data-lucide="copy"></i>
+                    </button>
+                </div>
+
+                <div class="code-container">
+                    <pre><code id="cmd-npm">npm install</code></pre>
+                    <button class="copy-btn" onclick="copyToClipboard('cmd-npm')">
+                        <i data-lucide="copy"></i>
+                    </button>
+                </div>
+            </section>
+
+            <!-- ÉTAPE 4 : CLÉ ET COMPILATION -->
+            <section id="step-build" class="step-card">
+                <div class="step-header">
+                    <div class="step-number">4</div>
+                    <h2 class="fr-content">Générer la Clé et Compiler les Assets</h2>
+                    <h2 class="en-content">Generate App Key & Build Assets</h2>
+                </div>
+                
+                <p class="fr-content">Générez la clé de sécurité de l'application et compilez les scripts frontend (JSX/Vue/Sass) :</p>
+                <p class="en-content">Generate the secure application encryption key and build the frontend assets:</p>
+
+                <div class="code-container">
+                    <pre><code id="cmd-key">php artisan key:generate</code></pre>
+                    <button class="copy-btn" onclick="copyToClipboard('cmd-key')">
+                        <i data-lucide="copy"></i>
+                    </button>
+                </div>
+
+                <div class="code-container">
+                    <pre><code id="cmd-mix">npm run dev</code></pre>
+                    <button class="copy-btn" onclick="copyToClipboard('cmd-mix')">
+                        <i data-lucide="copy"></i>
+                    </button>
+                </div>
+            </section>
+
+            <!-- ÉTAPE 5 : BASE DE DONNÉES -->
+            <section id="step-db" class="step-card">
+                <div class="step-header">
+                    <div class="step-number">5</div>
+                    <h2 class="fr-content">Créer la Base de Données et Migrer</h2>
+                    <h2 class="en-content">Create Database & Run Migrations</h2>
+                </div>
+                
+                <p class="fr-content">
+                    1. Lancez votre serveur MySQL (ex: XAMPP, Laragon, WampServer).<br>
+                    2. Créez une base de données MySQL vide nommée <code>job_lister</code>.<br>
+                    3. Exécutez la commande suivante pour créer toutes les tables et injecter le jeu de données fictives (seeders) :
+                </p>
+                <p class="en-content">
+                    1. Start your local MySQL service (e.g. XAMPP, Laragon, WampServer).<br>
+                    2. Create an empty database named <code>job_lister</code>.<br>
+                    3. Execute the migration command with the seeding option to create tables and insert fake demonstration data:
+                </p>
+
+                <div class="code-container">
+                    <pre><code id="cmd-migrate">php artisan migrate:fresh --seed</code></pre>
+                    <button class="copy-btn" onclick="copyToClipboard('cmd-migrate')">
+                        <i data-lucide="copy"></i>
+                    </button>
+                </div>
+            </section>
+
+            <!-- ÉTAPE 6 : LANCEMENT -->
+            <section id="step-serve" class="step-card">
+                <div class="step-header">
+                    <div class="step-number">6</div>
+                    <h2 class="fr-content">Lancer l'Application</h2>
+                    <h2 class="en-content">Serve the Application</h2>
+                </div>
+                
+                <p class="fr-content">Démarrez le serveur de développement PHP local intégré de Laravel :</p>
+                <p class="en-content">Start the Laravel local server to run your site:</p>
+
+                <div class="code-container">
+                    <pre><code id="cmd-serve">php artisan serve</code></pre>
+                    <button class="copy-btn" onclick="copyToClipboard('cmd-serve')">
+                        <i data-lucide="copy"></i>
+                    </button>
+                </div>
+
+                <div style="margin-top: 1.5rem; display: flex; align-items: center; gap: 0.8rem; background: var(--primary-glow); padding: 1.2rem; border-radius: 12px; border: 1px solid rgba(16, 185, 129, 0.25);">
+                    <i data-lucide="external-link" style="color: var(--primary);"></i>
+                    <div>
+                        <strong class="fr-content">Accès au site :</strong>
+                        <strong class="en-content">Access the site:</strong>
+                        <br>
+                        <a href="http://127.0.0.1:8000" target="_blank" style="color: var(--primary); text-decoration: none; font-weight: 700;">http://127.0.0.1:8000</a>
+                    </div>
+                </div>
+            </section>
+
+            <!-- RÉSOLUTION DE PROBLÈMES -->
+            <section id="step-trouble" class="step-card trouble-section">
+                <div class="trouble-header">
+                    <i data-lucide="alert-triangle"></i>
+                    <h2 class="fr-content">Dépannage & Erreurs Courantes</h2>
+                    <h2 class="en-content">Troubleshooting & Common Errors</h2>
+                </div>
+
+                <!-- Erreur 1 -->
+                <div class="trouble-item">
+                    <div class="trouble-title">
+                        <i data-lucide="alert-circle" size="18"></i>
+                        <span class="fr-content">Erreur lors de "composer install"</span>
+                        <span class="en-content">Error during "composer install"</span>
+                    </div>
+                    <div class="trouble-solution">
+                        <span class="fr-content">Si Composer renvoie une erreur liée aux versions de packages, exécutez plutôt : <code>composer update</code></span>
+                        <span class="en-content">If Composer raises dependency resolution issues, try updating them directly with: <code>composer update</code></span>
+                    </div>
+                </div>
+
+                <!-- Erreur 2 -->
+                <div class="trouble-item">
+                    <div class="trouble-title">
+                        <i data-lucide="alert-circle" size="18"></i>
+                        <span class="fr-content">Erreur de connexion à la base de données SQL</span>
+                        <span class="en-content">Database Connection Refused Error</span>
+                    </div>
+                    <div class="trouble-solution">
+                        <span class="fr-content">Vérifiez que votre serveur MySQL est bien actif, qu'il tourne sur le port configuré dans le <code>.env</code> (3306 par défaut), et que le nom de la base de données créée correspond bien à <code>DB_DATABASE</code>.</span>
+                        <span class="en-content">Ensure that your local database engine is running, that it uses the correct port defined in the <code>.env</code> (default: 3306), and that you created the empty database with the exact name set in <code>DB_DATABASE</code>.</span>
+                    </div>
+                </div>
+
+                <!-- Erreur 3 -->
+                <div class="trouble-item">
+                    <div class="trouble-title">
+                        <i data-lucide="alert-circle" size="18"></i>
+                        <span class="fr-content">Modifications frontend non visibles</span>
+                        <span class="en-content">Frontend changes do not appear</span>
+                    </div>
+                    <div class="trouble-solution">
+                        <span class="fr-content">Pour recompiler automatiquement les modifications faites sur les composants Vue/React/Sass, exécutez la commande suivante à la place de `dev` : <code>npm run watch</code>.</span>
+                        <span class="en-content">To continuously compile changes in Vue/React components as you save files, use the hot reloading watcher: <code>npm run watch</code>.</span>
+                    </div>
+                </div>
+
+            </section>
+
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2026 JobLister. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // --- Copy to Clipboard Function ---
+        function copyToClipboard(elementId) {
+            const codeText = document.getElementById(elementId).innerText;
+            const btn = document.getElementById(elementId).parentElement.querySelector('.copy-btn');
+            
+            navigator.clipboard.writeText(codeText).then(() => {
+                btn.innerHTML = '<i data-lucide="check" style="color: var(--primary);"></i>';
+                lucide.createIcons();
+                setTimeout(() => {
+                    btn.innerHTML = '<i data-lucide="copy"></i>';
+                    lucide.createIcons();
+                }, 2000);
+            });
+        }
+
+        // --- Language Toggle Logic ---
+        const btnFr = document.getElementById('btn-fr');
+        const btnEn = document.getElementById('btn-en');
+        const htmlTag = document.documentElement;
+
+        btnFr.addEventListener('click', () => {
+            htmlTag.className = 'lang-fr';
+            btnFr.classList.add('active');
+            btnEn.classList.remove('active');
+            document.title = "JobLister — Guide d'Installation Local";
+        });
+
+        btnEn.addEventListener('click', () => {
+            htmlTag.className = 'lang-en';
+            btnEn.classList.add('active');
+            btnFr.classList.remove('active');
+            document.title = "JobLister — Local Setup Guide";
+        });
+
+        // --- Active Step Tracking Scroll Listener ---
+        const sections = document.querySelectorAll('section, .prereq-card');
+        const navButtons = document.querySelectorAll('.timeline-item-btn');
+
+        window.addEventListener('scroll', () => {
+            let currentActive = '';
+            
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                const sectionHeight = section.clientHeight;
+                if (window.scrollY >= sectionTop - 150) {
+                    currentActive = section.getAttribute('id');
+                }
+            });
+
+            if (currentActive) {
+                navButtons.forEach(btn => {
+                    btn.classList.remove('active');
+                    if (btn.dataset.step === currentActive) {
+                        btn.classList.add('active');
+                    }
+                });
+            }
+        });
+
+        // Click to scroll to step
+        navButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const targetId = btn.dataset.step;
+                const targetSection = document.getElementById(targetId);
+                if (targetSection) {
+                    window.scrollTo({
+                        top: targetSection.offsetTop - 85,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
+        // Init Lucide
+        lucide.createIcons();
+    </script>
+</body>
+</html>
