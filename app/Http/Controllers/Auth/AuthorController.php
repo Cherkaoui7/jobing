@@ -40,7 +40,12 @@ class AuthorController extends Controller
     //employer is company of author
     public function employer($employer)
     {
-        $company = Company::find($employer)->with('posts')->first();
+        preg_match('/^\d+/', (string) $employer, $matches);
+
+        abort_unless(isset($matches[0]), 404);
+
+        $company = Company::with('posts')->findOrFail((int) $matches[0]);
+
         return view('account.employer')->with([
             'company' => $company,
         ]);

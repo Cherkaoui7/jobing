@@ -160,10 +160,10 @@
                                         <td>{{$category->id}}</td>
                                         <td>{{$category->category_name}}</td>
                                         <td><a class="btn secondary-btn" href="{{route('category.edit',['category'=>$category])}}">Edit</a> 
-                                            <form action="{{route('category.destroy',['id'=>$category->id])}}" id="categoryDestroyForm" class="d-inline">
+                                            <form action="{{route('category.destroy',['id'=>$category->id])}}" method="POST" class="d-inline category-destroy-form">
                                                 @csrf
                                                 @method('delete')
-                                                <button id="categoryDestroyBtn" class="btn danger-btn">Delete</button>
+                                                <button class="btn danger-btn">Delete</button>
                                             </form>
                                         </td>
                                     </tr>
@@ -263,10 +263,10 @@
 <script>
      $(document).ready(function(){
         //delete category 
-        $('#categoryDestroyBtn').click(function(e){
+        $('.category-destroy-form').submit(function(e){
             e.preventDefault();
             if(window.confirm('Are you sure you want delete the Category?')){
-                $('#categoryDestroyForm').submit();
+                this.submit();
             }
         })
     })

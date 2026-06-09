@@ -8,11 +8,10 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use RealRashid\SweetAlert\Facades\Alert;
 use Barryvdh\DomPDF\Facade\Pdf;
-use Smalot\PdfParser\Parser;
-use Illuminate\Support\Facades\Http;
 
 class AccountController extends Controller
 {
@@ -40,47 +39,58 @@ class AccountController extends Controller
 
     public function applyJobView(Request $request)
     {
-        if ($this->hasApplied(auth()->user(), $request->post_id)) {
-            Alert::toast('You have already applied for this job!', 'success');
-            return redirect()->route('post.show', ['job' => $request->post_id]);
-        }else if(!auth()->user()->hasRole('user')){
-            Alert::toast('You are a employer! You can\'t apply for the job! ', 'error');
-            return redirect()->route('post.show', ['job' => $request->post_id]);
+        $validated = $request->validate([
+            'post_id' => ['required', 'exists:posts,id'],
+        ]);
+
+        $post = Post::findOrFail($validated['post_id']);
+
+        if (! auth()->user()->hasRole('user')) {
+            Alert::toast('Employers cannot apply for jobs.', 'error');
+            return redirect()->route('post.show', ['job' => $post->id]);
         }
 
-        $post = Post::find($request->post_id);
+        if ($this->hasApplied(auth()->user(), $post->id)) {
+            Alert::toast('You have already applied for this job!', 'success');
+            return redirect()->route('post.show', ['job' => $post->id]);
+        }
+
         $company = $post->company()->first();
         return view('account.apply-job', compact('post', 'company'));
     }
 
     public function applyJob(Request $request)
 {
-    $request->validate([
-        'cv' => 'required|mimes:pdf,doc,docx|max:2048'
+    $validated = $request->validate([
+        'post_id' => ['required', 'exists:posts,id'],
+        'cv' => ['required', 'mimes:pdf,doc,docx', 'max:2048'],
     ]);
 
-    $application = new JobApplication;
     $user = User::find(auth()->user()->id);
+    $post = Post::findOrFail($validated['post_id']);
 
-    if ($this->hasApplied($user, $request->post_id)) {
-        Alert::toast('You have already applied for this job!', 'success');
-        return redirect()->route('post.show', ['job' => $request->post_id]);
+    if (! $user->hasRole('user')) {
+        Alert::toast('Employers cannot apply for jobs.', 'error');
+        return redirect()->route('post.show', ['job' => $post->id]);
     }
 
-    // upload cv
-    $cvName = time() . '_' . $request->file('cv')->getClientOriginalName();
+    if ($this->hasApplied($user, $post->id)) {
+        Alert::toast('You have already applied for this job!', 'success');
+        return redirect()->route('post.show', ['job' => $post->id]);
+    }
 
-    $request->file('cv')->move(public_path('uploads/cv'), $cvName);
+    $cvPath = $request->file('cv')->store('job-applications/cv');
 
+    $application = new JobApplication;
     $application->user_id = auth()->user()->id;
-    $application->post_id = $request->post_id;
-    $application->cv = 'uploads/cv/' . $cvName;
+    $application->post_id = $post->id;
+    $application->cv = $cvPath;
 
     $application->save();
 
     Alert::toast('Application sent successfully!', 'success');
 
-    return redirect()->route('post.show', ['job' => $request->post_id]);
+    return redirect()->route('post.show', ['job' => $post->id]);
 }
 
     public function changePasswordView()
@@ -98,26 +108,21 @@ class AccountController extends Controller
         //check if the password is valid
         $request->validate([
             'current_password' => 'required|min:8',
-            'new_password' => 'required|min:8'
+            'new_password' => 'required|min:8|confirmed'
         ]);
 
         $authUser = auth()->user();
         $currentP = $request->current_password;
         $newP = $request->new_password;
-        $confirmP = $request->confirm_password;
 
         if (Hash::check($currentP, $authUser->password)) {
-            if (Str::of($newP)->exactly($confirmP)) {
-                $user = User::find($authUser->id);
-                $user->password = Hash::make($newP);
-                if ($user->save()) {
-                    Alert::toast('Password Changed!', 'success');
-                    return redirect()->route('account.index');
-                } else {
-                    Alert::toast('Something went wrong!', 'warning');
-                }
+            $user = User::find($authUser->id);
+            $user->password = Hash::make($newP);
+            if ($user->save()) {
+                Alert::toast('Password Changed!', 'success');
+                return redirect()->route('account.index');
             } else {
-                Alert::toast('Passwords do not match!', 'info');
+                Alert::toast('Something went wrong!', 'warning');
             }
         } else {
             Alert::toast('Incorrect Password!', 'info');
@@ -133,7 +138,7 @@ class AccountController extends Controller
     public function deleteAccount()
     {
         $user = User::find(auth()->user()->id);
-        Auth::logout($user->id);
+        Auth::logout();
         if ($user->delete()) {
             Alert::toast('Your account was deleted successfully!', 'info');
             return redirect(route('post.index'));
@@ -169,12 +174,8 @@ public function updateProfile(Request $request)
 
     // upload cv
     if ($request->hasFile('cv')) {
-
-        $cvName = time().'_'.$request->cv->getClientOriginalName();
-
-        $request->cv->move(public_path('uploads/cv'), $cvName);
-
-        $user->cv = 'uploads/cv/'.$cvName;
+        $this->deleteStoredCv($user->cv);
+        $user->cv = $request->file('cv')->store('profile-cvs');
     }
 
     $user->name = $request->name;
@@ -200,11 +201,38 @@ public function updateProfile(Request $request)
 
     protected function hasApplied($user, $postId)
     {
-        $applied = $user->applied()->where('post_id', $postId)->get();
-        if ($applied->count()) {
-            return true;
-        } else {
-            return false;
+        return $user->applied()->where('post_id', $postId)->exists();
+    }
+
+    public function downloadCv()
+    {
+        $user = auth()->user();
+
+        return $this->downloadStoredCv($user->cv, Str::slug($user->name) . '-cv');
+    }
+
+    protected function downloadStoredCv(?string $path, string $downloadName)
+    {
+        if (! $path) {
+            abort(404);
+        }
+
+        if (Storage::exists($path)) {
+            return Storage::download($path, $downloadName . '.' . pathinfo($path, PATHINFO_EXTENSION));
+        }
+
+        $legacyPath = public_path($path);
+        if (file_exists($legacyPath)) {
+            return response()->download($legacyPath, basename($legacyPath));
+        }
+
+        abort(404);
+    }
+
+    protected function deleteStoredCv(?string $path): void
+    {
+        if ($path && Storage::exists($path)) {
+            Storage::delete($path);
         }
     }
     public function cvBuilder()

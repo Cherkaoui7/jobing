@@ -17,4 +17,15 @@ class Company extends Model
     {
         return $this->hasMany('App\Models\Post');
     }
+
+    public function websiteUrl(): string
+    {
+        $website = trim((string) $this->website);
+
+        if (preg_match('/^https?:\/\//i', $website)) {
+            return $website;
+        }
+
+        return '#';
+    }
 }

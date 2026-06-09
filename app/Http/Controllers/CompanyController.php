@@ -6,10 +6,17 @@ use App\Models\Company;
 use App\Models\CompanyCategory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use RealRashid\SweetAlert\Facades\Alert;
 
 class CompanyController extends Controller
 {
+    public function index()
+    {
+        $companies = Company::with('getCategory')->paginate(12);
+        return view('company.index', compact('companies'));
+    }
+
     /**
      * Show the form for creating a new resource.
      *
@@ -63,8 +70,10 @@ class CompanyController extends Controller
         $this->validateCompanyUpdate($request);
 
         $company = auth()->user()->company;
+        abort_unless($company, 404);
+
         if ($this->companyUpdate($company, $request)) {
-            Alert::toast('Company created!', 'success');
+            Alert::toast('Company updated!', 'success');
             return redirect()->route('account.authorSection');
         }
         Alert::toast('Failed!', 'error');
@@ -77,8 +86,8 @@ class CompanyController extends Controller
             'title' => 'required|min:5',
             'description' => 'required|min:5',
             'logo' => 'required|image|max:2999',
-            'category' => 'required',
-            'website' => 'required|string',
+            'category' => 'required|exists:company_categories,id',
+            'website' => 'required|url',
             'cover_img' => 'sometimes|image|max:3999'
         ]);
     }
@@ -87,9 +96,9 @@ class CompanyController extends Controller
         return $request->validate([
             'title' => 'required|min:5',
             'description' => 'required|min:5',
-            'logo' => 'someiimes|image|max:2999',
-            'category' => 'required',
-            'website' => 'required|string',
+            'logo' => 'sometimes|image|max:2999',
+            'category' => 'required|exists:company_categories,id',
+            'website' => 'required|url',
             'cover_img' => 'sometimes|image|max:3999'
         ]);
     }
@@ -149,12 +158,12 @@ class CompanyController extends Controller
         if ($request->hasFile('cover_img')) {
             $fileNameToStore = $this->getFileName($request->file('cover_img'));
             $coverPath = $request->file('cover_img')->storeAs('public/companies/cover', $fileNameToStore);
-            if ($company->cover_img) {
+            if ($company->cover_img && $company->cover_img !== 'nocover') {
                 Storage::delete('public/companies/cover/' . basename($company->cover_img));
             }
             $company->cover_img = 'storage/companies/cover/' . $fileNameToStore;
         }
-        $company->cover_img = 'nocover';
+
         if ($company->save()) {
             return true;
         }
@@ -162,16 +171,19 @@ class CompanyController extends Controller
     }
     protected function getFileName($file)
     {
-        $fileName = $file->getClientOriginalName();
-        $actualFileName = pathinfo($fileName, PATHINFO_FILENAME);
-        $fileExtension = pathinfo($fileName, PATHINFO_EXTENSION);
-        return $actualFileName . time() . '.' . $fileExtension;
+        return (string) Str::uuid() . '.' . $file->getClientOriginalExtension();
     }
 
     public function destroy()
     {
-        Storage::delete('public/companies/logos/' . basename(auth()->user()->company->logo));
-        if (auth()->user()->company->delete()) {
+        $company = auth()->user()->company;
+        abort_unless($company, 404);
+
+        Storage::delete('public/companies/logos/' . basename($company->logo));
+        if ($company->cover_img && $company->cover_img !== 'nocover') {
+            Storage::delete('public/companies/cover/' . basename($company->cover_img));
+        }
+        if ($company->delete()) {
             return redirect()->route('account.authorSection');
         }
         return redirect()->route('account.authorSection');

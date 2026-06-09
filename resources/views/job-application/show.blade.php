@@ -22,6 +22,9 @@
                 <h6 class="text-info text-capitalize">{{$applicant->name}}</h6>
                 <p class="my-2"><i class="fas fa-envelope"></i> Email: {{$applicant->email}}</p>
                 <a href="mailto:{{$applicant->email}}" class="btn primary-btn" title="click to send email">Send user an email</a>
+                @if($application->cv)
+                  <a href="{{ route('jobApplication.downloadCv', ['id' => $application->id]) }}" class="btn primary-outline-btn">Download CV</a>
+                @endif
               </div>
             </div>
           </div>
@@ -45,7 +48,7 @@
                   <a href="{{route('account.employer',['employer'=>$company])}}">{{$company->title}}</a>
                 </h6>
                 <p class="my-2"><i class="fas fa-map-marker-alt"></i> Location: {{$post->job_location}}</p>
-                <p class="text-danger small">{{date('l, jS \of F Y',$post->deadlineTimestamp())}}, ({{ date('d',$post->remainingDays())}} days from now)</p>
+                <p class="text-danger small">{{date('l, jS \of F Y',$post->deadlineTimestamp())}}, ({{ $post->remainingDays() }} days from now)</p>
               </div>
             </div>
             <div class="mb-3 d-flex justify-content-end">

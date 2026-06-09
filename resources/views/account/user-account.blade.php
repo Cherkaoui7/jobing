@@ -75,8 +75,7 @@
                                     @if(auth()->user()->cv)
 
                                         <a
-                                            href="{{asset(auth()->user()->cv)}}"
-                                            target="_blank"
+                                            href="{{ route('account.downloadCv') }}"
                                             class="btn btn-light btn-block mt-4"
                                         >
                                             Download CV

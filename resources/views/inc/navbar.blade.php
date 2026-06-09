@@ -33,7 +33,7 @@
                 </li>
 
                 <li class="nav-item">
-                    <a href="#" class="nav-link">
+                    <a href="{{ route('company.index') }}" class="nav-link">
                         Companies
                     </a>
                 </li>
@@ -127,10 +127,13 @@
 
                         <div class="dropdown-divider"></div>
 
-                        <a class="dropdown-item text-danger" href="{{route('account.logout')}}">
-                            <i class="fas fa-sign-out-alt"></i>
-                            Logout
-                        </a>
+                        <form action="{{ route('account.logout') }}" method="POST">
+                            @csrf
+                            <button type="submit" class="dropdown-item text-danger">
+                                <i class="fas fa-sign-out-alt"></i>
+                                Logout
+                            </button>
+                        </form>
 
                     </div>
 

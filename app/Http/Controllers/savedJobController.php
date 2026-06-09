@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Post;
 use App\Models\User;
-use Illuminate\Http\Request;
 use RealRashid\SweetAlert\Facades\Alert;
 
 class savedJobController extends Controller
@@ -15,15 +15,22 @@ class savedJobController extends Controller
     }
     public function store($id)
     {
+        if (! auth()->user()->hasRole('user')) {
+            Alert::toast('Only job seekers can save jobs.', 'error');
+            return redirect()->back();
+        }
+
+        Post::findOrFail($id);
+
         $user = User::find(auth()->user()->id);
-        $hasPost = $user->posts()->where('id', $id)->get();
+        $hasPost = $user->posts()->where('posts.id', $id)->exists();
         //check if the post is already saved
-        if (count($hasPost)) {
+        if ($hasPost) {
             Alert::toast('You already have saved this job!', 'success');
             return redirect()->back();
         } else {
             Alert::toast('Job successfully saved!', 'success');
-            $user->posts()->attach($id);
+            $user->posts()->syncWithoutDetaching([$id]);
             return redirect()->route('savedJob.index');
         }
     }

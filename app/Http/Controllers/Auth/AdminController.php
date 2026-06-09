@@ -46,12 +46,27 @@ class AdminController extends Controller
 
     public function destroyUser(Request $request)
     {
+        $request->validate([
+            'user_id' => ['required', 'exists:users,id'],
+        ]);
+
         $user = User::findOrFail($request->user_id);
+
+        if ($user->id === auth()->id()) {
+            Alert::toast('You cannot delete your own account from this screen.', 'warning');
+            return redirect()->route('account.viewAllUsers');
+        }
+
+        if ($user->hasRole('admin') && User::role('admin')->count() <= 1) {
+            Alert::toast('Cannot delete the last administrator.', 'warning');
+            return redirect()->route('account.viewAllUsers');
+        }
+
         if ($user->delete()) {
             Alert::toast('Deleted Successfully!', 'danger');
             return redirect()->route('account.viewAllUsers');
         } else {
-            return redirect()->intented('account.viewAllUsers');
+            return redirect()->intended(route('account.viewAllUsers'));
         }
     }
 }

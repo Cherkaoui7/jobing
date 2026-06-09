@@ -20,21 +20,20 @@
               </tr>
             </thead>
             <tbody>
-              @foreach ($posts as $post)
-                @if($posts->count() >0)
+              @forelse ($posts as $post)
                 <tr>
                   <td><a href="{{route('post.show',['job'=>$post])}}">{{$post->job_title}}</a></td>
                   <td><a href="#">{{$post->job_level}}</a></td>
                   <td><a href="{{route('account.employer',['employer'=>$post->company])}}">{{substr($post->company->title,0,14)}}..</a></td>
                   <td>{{$post->vacancy_count}}</td>
-                  <td>{{date('d/m/Y',$post->deadlineTimestamp())}}, {{date('d',$post->remainingDays()) }} days</td>
+                  <td>{{date('d/m/Y',$post->deadlineTimestamp())}}, {{$post->remainingDays()}} days</td>
                   <td><form action="{{route('savedJob.destroy',['id'=>$post])}}" method="POST">
                     @csrf
                     @method("delete")
                     <button type="submit" href="#" class="btn secondary-outline-btn">Unsave</button>
                   </form></td>
                 </tr>
-                @else
+              @empty
                 <tr>
                   <td>You have no jobs saved.</td>
                   <td></td>
@@ -44,8 +43,7 @@
                   <td></td>
                   <td></td>
                 </tr>
-                @endif
-              @endforeach
+              @endforelse
             </tbody>
           </table>
         </div>

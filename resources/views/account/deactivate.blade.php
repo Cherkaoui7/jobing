@@ -14,7 +14,10 @@
         <div class="col-sm-12 col-md-8">
           <div class="py-3">
             <p class="mb-3">Logout instead</p>
-            <a href="{{route('account.logout')}}" class="btn primary-outline-btn">Logout</a>
+            <form action="{{ route('account.logout') }}" method="POST" class="d-inline-block">
+              @csrf
+              <button type="submit" class="btn primary-outline-btn">Logout</button>
+            </form>
           </div>
           
           <div>

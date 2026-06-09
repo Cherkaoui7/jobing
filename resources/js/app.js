@@ -6,10 +6,12 @@ import { BrowserRouter as Router } from "react-router-dom";
 
 import AppComponent from "./components/AppComponent.jsx";
 
-const root = ReactDOM.createRoot(document.getElementById("app"));
-
-root.render(
-    <Router>
-        <AppComponent />
-    </Router>
-);
+const appElement = document.getElementById("app");
+if (appElement) {
+    const root = ReactDOM.createRoot(appElement);
+    root.render(
+        <Router>
+            <AppComponent />
+        </Router>
+    );
+}

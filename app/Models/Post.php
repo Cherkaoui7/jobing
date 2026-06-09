@@ -21,7 +21,7 @@ class Post extends Model
     //user post piviot for savedJobs
     public function users()
     {
-        return $this->hasMany('App\Models\User');
+        return $this->belongsToMany('App\Models\User');
     }
 
     public function company()
@@ -36,9 +36,7 @@ class Post extends Model
 
     public function remainingDays()
     {
-        $deadline = $this->deadline;
-        $timestamp = Carbon::parse($deadline)->timestamp - Carbon::now()->timestamp;
-        return $timestamp;
+        return max(0, Carbon::now()->startOfDay()->diffInDays(Carbon::parse($this->deadline)->startOfDay(), false));
     }
 
     public function getSkills()

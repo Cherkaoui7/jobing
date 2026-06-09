@@ -44,13 +44,16 @@
                   <a href="{{route('account.employer',['employer'=>$company])}}">{{$company->title}}</a>
                 </h6>
                 <p class="my-2"><i class="fas fa-map-marker-alt"></i> Location: {{$post->job_location}}</p>
-                <p class="text-danger small">{{date('l, jS \of F Y',$post->deadlineTimestamp())}}, ({{ date('d',$post->remainingDays())}} days from now)</p>
+                <p class="text-danger small">{{date('l, jS \of F Y',$post->deadlineTimestamp())}}, ({{ $post->remainingDays() }} days from now)</p>
               </div>
             </div>
             <div class="mb-3 d-flex justify-content-end">
               <div class="my-2">
                 <a href="{{route('post.show',['job'=>$post])}}" class="secondary-link"><i class="fas fa-briefcase"></i> View job</a>|
-                <a href="{{route('savedJob.store',['id'=>$post->id])}}" class="secondary-link"><i class="fas fa-share-square"></i> Save job</a>
+                <form action="{{ route('savedJob.store', ['id' => $post->id]) }}" method="POST" class="d-inline-block">
+                  @csrf
+                  <button type="submit" class="btn btn-link secondary-link p-0"><i class="fas fa-share-square"></i> Save job</button>
+                </form>
               </div>
             </div>
             <div class="mb-3 d-flex justify-content-end">
@@ -74,7 +77,7 @@
         Allowed: PDF, DOC, DOCX
     </small>
 </div>
-                  <button type="submit" class="btn primary-btn">Send Application <i class="fas fa-chevron-right"></i></a>
+                  <button type="submit" class="btn primary-btn">Send Application <i class="fas fa-chevron-right"></i></button>
                 </form>
               </div>
             </div>

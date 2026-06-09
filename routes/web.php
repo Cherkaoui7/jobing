@@ -9,9 +9,34 @@ use App\Http\Controllers\JobApplicationController;
 use App\Http\Controllers\JobController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\savedJobController;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 //public routes
+Route::post('/set-database', function (Request $request) {
+    $validated = $request->validate([
+        'db_connection' => ['required', 'in:mysql,sqlite'],
+    ]);
+
+    $db = $validated['db_connection'];
+
+    Auth::logout();
+    $request->session()->invalidate();
+    $request->session()->regenerateToken();
+    session(['db_connection' => $db]);
+
+    if ($db === 'sqlite') {
+        $path = database_path('database.sqlite');
+
+        if (! file_exists($path)) {
+            touch($path);
+        }
+    }
+
+    return back();
+})->name('set-database');
+
 Route::get('/', [PostController::class, 'index'])->name('post.index');
 Route::get('/job/{job}', [PostController::class, 'show'])->name('post.show');
 Route::get('employer/{employer}', [AuthorController::class, 'employer'])->name('account.employer');
@@ -19,18 +44,21 @@ Route::get('employer/{employer}', [AuthorController::class, 'employer'])->name('
 //return vue page
 Route::get('/search', [JobController::class, 'index'])->name('job.index');
 
+Route::get('/companies', [CompanyController::class, 'index'])->name('company.index');
+
 //auth routes
 Route::middleware('auth')->prefix('account')->group(function () {
   //every auth routes AccountController
-  Route::get('logout', [AccountController::class, 'logout'])->name('account.logout');
+  Route::post('logout', [AccountController::class, 'logout'])->name('account.logout');
   Route::get('overview', [AccountController::class, 'index'])->name('account.index');
   Route::get('deactivate', [AccountController::class, 'deactivateView'])->name('account.deactivate');
   Route::get('change-password', [AccountController::class, 'changePasswordView'])->name('account.changePassword');
   Route::delete('delete', [AccountController::class, 'deleteAccount'])->name('account.delete');
   Route::put('change-password', [AccountController::class, 'changePassword'])->name('account.changePassword');
+  Route::get('cv/download', [AccountController::class, 'downloadCv'])->name('account.downloadCv');
   //savedJobs
   Route::get('my-saved-jobs', [savedJobController::class, 'index'])->name('savedJob.index');
-  Route::get('my-saved-jobs/{id}', [savedJobController::class, 'store'])->name('savedJob.store');
+  Route::post('my-saved-jobs/{id}', [savedJobController::class, 'store'])->name('savedJob.store');
   Route::delete('my-saved-jobs/{id}', [savedJobController::class, 'destroy'])->name('savedJob.destroy');
   //applyjobs
   Route::get('apply-job', [AccountController::class, 'applyJobView'])->name('account.applyJob');
@@ -63,6 +91,7 @@ Route::post('analyze-resume', [AccountController::class, 'analyzeResume'])->name
     Route::get('author-section', [AuthorController::class, 'authorSection'])->name('account.authorSection');
 
     Route::get('job-application/{id}', [JobApplicationController::class, 'show'])->name('jobApplication.show');
+    Route::get('job-application/{id}/cv', [JobApplicationController::class, 'downloadCv'])->name('jobApplication.downloadCv');
     Route::delete('job-application', [JobApplicationController::class, 'destroy'])->name('jobApplication.destroy');
     Route::get('job-application', [JobApplicationController::class, 'index'])->name('jobApplication.index');
 

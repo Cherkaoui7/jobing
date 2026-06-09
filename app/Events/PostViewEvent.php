@@ -23,8 +23,6 @@ class PostViewEvent
     public function __construct(Post $post)
     {
         $post->increment('views');
-
-        $post->views += 1;
     }
 
     /**

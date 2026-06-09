@@ -34,9 +34,14 @@ class PostController extends Controller
 
     public function store(Request $request)
     {
-        $this->requestValidate($request);
+        $validated = $this->requestValidate($request);
 
-        $postData = array_merge(['company_id' => auth()->user()->company->id], $request->all());
+        if (! auth()->user()->company) {
+            Alert::toast('You must create a company first!', 'info');
+            return redirect()->route('company.create');
+        }
+
+        $postData = array_merge($validated, ['company_id' => auth()->user()->company->id]);
 
         $post = Post::create($postData);
         if ($post) {
@@ -49,10 +54,10 @@ class PostController extends Controller
 
     public function show($id)
     {
-        $post = Post::findOrFail($id);
+        $post = Post::with('company.getCategory')->findOrFail($this->routeId($id));
 
         event(new PostViewEvent($post));
-        $company = $post->company()->first();
+        $company = $post->company;
 
         $similarPosts = Post::whereHas('company', function ($query) use ($company) {
             return $query->where('company_category_id', $company->company_category_id);
@@ -66,15 +71,17 @@ class PostController extends Controller
 
     public function edit(Post $post)
     {
+        $this->ensureOwnsPost($post);
+
         return view('post.edit', compact('post'));
     }
 
-    public function update(Request $request, $post)
+    public function update(Request $request, Post $post)
     {
-        $this->requestValidate($request);
-        $getPost = Post::findOrFail($post);
+        $this->ensureOwnsPost($post);
+        $validated = $this->requestValidate($request);
 
-        $newPost = $getPost->update($request->all());
+        $newPost = $post->update($validated);
         if ($newPost) {
             Alert::toast('Post successfully updated!', 'success');
             return redirect()->route('account.authorSection');
@@ -84,6 +91,8 @@ class PostController extends Controller
 
     public function destroy(Post $post)
     {
+        $this->ensureOwnsPost($post);
+
         if ($post->delete()) {
             Alert::toast('Post successfully deleted!', 'success');
             return redirect()->route('account.authorSection');
@@ -100,11 +109,29 @@ class PostController extends Controller
             'employment_type' => 'required',
             'job_location' => 'required',
             'salary' => 'required',
-            'deadline' => 'required',
+            'deadline' => 'required|date',
             'education_level' => 'required',
             'experience' => 'required',
             'skills' => 'required',
             'specifications' => 'sometimes|min:5',
         ]);
+    }
+
+    protected function ensureOwnsPost(Post $post): void
+    {
+        $company = auth()->user()->company;
+
+        if (! $company || $post->company_id !== $company->id) {
+            abort(403);
+        }
+    }
+
+    protected function routeId($value): int
+    {
+        preg_match('/^\d+/', (string) $value, $matches);
+
+        abort_unless(isset($matches[0]), 404);
+
+        return (int) $matches[0];
     }
 }

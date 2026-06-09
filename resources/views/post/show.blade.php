@@ -7,13 +7,14 @@
       <div class="col-sm-12 col-md-8">
         <div class="job-listing border">
           <div class="company-info">
-            <div class="company-banner">
+            <div class="company-banner"><a href="{{route('job.index')}}" class="stretched-link">
               <div class="banner-overlay"></div>
               @if($company->cover_img == 'nocover')
               <img src="{{asset('images/companies/nocover.jpg')}}" class="company-banner-img img-fluid" alt="">
               @else
               <img src="{{asset($company->cover_img)}}" class="company-banner-img img-fluid" alt="">
               @endif
+</a>
               <div class="company-media">
                 <img src="{{asset($company->logo)}}" alt="" class="company-logo">
                 <div>
@@ -24,7 +25,7 @@
                 </div>
               </div>
               <div class="company-website">
-                <a href="{{$company->website}}" target="_blank"><i class="fas fa-globe"></i></a>
+                <a href="{{ $company->websiteUrl() }}" target="_blank" rel="noopener noreferrer"><i class="fas fa-globe"></i></a>
               </div>
             </div>
 
@@ -41,7 +42,7 @@
               <div class="">
                 <p class="job-views">
                   <span class="text-success">Views: {{$post->views}} </span> |
-                  <span class="text-danger">Apply Before: {{date('d',$post->remainingDays())}} days</span>
+                  <span class="text-danger">Apply Before: {{$post->remainingDays()}} days</span>
                 </p>
               </div>
             </div>
@@ -78,7 +79,7 @@
                     <tr>
                       <td width="33%">Apply before(Deadline)</td>
                       <td width="3%">:</td>
-                      <td width="64%" class="text-danger">{{date('l, jS \of F Y',$post->deadlineTimestamp())}}, ({{ date('d',$post->remainingDays())}} days from now)</td>
+                      <td width="64%" class="text-danger">{{date('l, jS \of F Y',$post->deadlineTimestamp())}}, ({{ $post->remainingDays() }} days from now)</td>
                     </tr>
                   </tbody>
                 </table>
@@ -111,14 +112,33 @@
               </div>
               <div class="job-level-description">
                 {{-- <p class="font-weight-bold">More Specifications</p> --}}
-                <p class="py-2">{!!$post->specifications!!}</p>
+                <p class="py-2">{!! nl2br(e($post->specifications)) !!}</p>
               </div>
               <br>
               <hr>
               <div class="d-flex justify-content-between">
                 <div>
-                  <a href="{{route('account.applyJob',['post_id'=>$post])}}" class="btn primary-btn">Apply now</a>
-                  <a href="{{route('savedJob.store',['id'=>$post])}}" class="btn primary-outline-btn"><i class="fas fa-star"></i> Save job</a>
+                  @auth
+                    @if(auth()->user()->hasRole('user'))
+                      @if(auth()->user()->applied()->where('post_id', $post->id)->exists())
+                        <button disabled class="btn primary-btn">Already Applied</button>
+                      @else
+                        <a href="{{route('account.applyJob',['post_id'=>$post])}}" class="btn primary-btn">Apply now</a>
+                      @endif
+                    @else
+                      <button disabled class="btn primary-btn">Employers cannot apply</button>
+                    @endif
+                  @else
+                    <a href="{{route('account.applyJob',['post_id'=>$post])}}" class="btn primary-btn">Login to Apply</a>
+                  @endauth
+                  @auth
+                    <form action="{{ route('savedJob.store', ['id' => $post->id]) }}" method="POST" class="d-inline-block">
+                      @csrf
+                      <button type="submit" class="btn primary-outline-btn"><i class="fas fa-star"></i> Save job</button>
+                    </form>
+                  @else
+                    <a href="{{ route('login') }}" class="btn primary-outline-btn"><i class="fas fa-star"></i> Save job</a>
+                  @endauth
                 </div>
                 <div class="social-links">
                   <a href="https://www.facebook.com"  target="_blank" class="btn btn-primary"><i class="fab fa-facebook"></i></a>
@@ -138,8 +158,27 @@
           </div>
           <div class="card-body">
             <div class="btn-group w-100">
-              <a href="{{route('account.applyJob',['post_id'=>$post->id])}}" class="btn primary-outline-btn float-left">Apply Now</a>
-              <a href="{{route('savedJob.store',['id'=>$post->id])}}" class="btn primary-btn"><i class="fas fa-star"></i> Save job</a>
+              @auth
+                @if(auth()->user()->hasRole('user'))
+                  @if(auth()->user()->applied()->where('post_id', $post->id)->exists())
+                    <button disabled class="btn primary-outline-btn float-left">Already Applied</button>
+                  @else
+                    <a href="{{route('account.applyJob',['post_id'=>$post->id])}}" class="btn primary-outline-btn float-left">Apply Now</a>
+                  @endif
+                @else
+                  <button disabled class="btn primary-outline-btn float-left">Employers cannot apply</button>
+                @endif
+              @else
+                <a href="{{route('account.applyJob',['post_id'=>$post->id])}}" class="btn primary-outline-btn float-left">Login to Apply</a>
+              @endauth
+              @auth
+                <form action="{{ route('savedJob.store', ['id' => $post->id]) }}" method="POST" class="d-inline-block">
+                  @csrf
+                  <button type="submit" class="btn primary-btn"><i class="fas fa-star"></i> Save job</button>
+                </form>
+              @else
+                <a href="{{ route('login') }}" class="btn primary-btn"><i class="fas fa-star"></i> Save job</a>
+              @endauth
             </div>
           </div>
         </div>
@@ -149,28 +188,26 @@
           </div>
           <div class="card-body">
             <div class="similar-jobs">
-              @foreach ($similarJobs as $job)
-              @if($similarJobs)
+              @forelse ($similarJobs as $job)
                 <div class="job-item border-bottom row">
                   <div class="col-4">
                     <img src="{{asset($job->company->logo)}}" class="company-logo" alt="">
                   </div>
                   <div class="job-desc col-8">
-                    <a href="{{route('post.show',['job'=>$post])}}" class="job-category text-muted font-weight-bold">
+                    <a href="{{route('post.show',['job'=>$job])}}" class="job-category text-muted font-weight-bold">
                       <p class="text-muted h6">{{$job->job_title}}</p>
                       <p class="small">{{$job->company->title}}</p>
-                      <p class="font-weight-normal small text-danger">Deadline: {{date('d',$job->remainingDays())}} days</p>
+                      <p class="font-weight-normal small text-danger">Deadline: {{$job->remainingDays()}} days</p>
                     </a>
                   </div>
                 </div>
-                @else
+              @empty
                 <div class="card">
                   <div class="card-header">
                     <p>No similar jobs</p>
                   </div>
                 </div>
-                @endif
-              @endforeach
+              @endforelse
             </div>
           </div>
         </div>

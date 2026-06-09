@@ -23,6 +23,41 @@
 
     @yield('layout-holder')
 
+    @if(!session()->has('db_connection'))
+    <!-- DB Selector Modal -->
+    <div class="modal fade" id="dbSelectorModal" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title">Choisir la base de données</h5>
+                </div>
+                <div class="modal-body">
+                    <p>Veuillez choisir la base de données à utiliser pour cette session :</p>
+                    <p class="text-muted small">Sélectionnez <strong>MySQL</strong> si vous êtes en ligne, ou <strong>SQLite</strong> si vous êtes hors ligne.</p>
+                </div>
+                <div class="modal-footer justify-content-center">
+                    <form action="{{ route('set-database') }}" method="POST" class="w-100 d-flex justify-content-around">
+                        @csrf
+                        <button type="submit" name="db_connection" value="mysql" class="btn btn-primary">MySQL (En ligne)</button>
+                        <button type="submit" name="db_connection" value="sqlite" class="btn btn-secondary">SQLite (Hors ligne)</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    @push('js')
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            $('#dbSelectorModal').modal({
+                backdrop: 'static',
+                keyboard: false
+            });
+            $('#dbSelectorModal').modal('show');
+        });
+    </script>
+    @endpush
+    @endif
+
     @include('sweetalert::alert')
 
     <script src="{{ asset('js/app.js') }}"></script>

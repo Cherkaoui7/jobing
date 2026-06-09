@@ -15,9 +15,9 @@
         @method('put')
         <div class="form-group">
           <label for="">Choose a Company Category</label>
-          <select class="form-control" name="category" value="{{ old('category')??$company->company_category_id }}"  required>
+          <select class="form-control" name="category" required>
             @foreach ($categories as $category)
-              <option value="{{$category->id}}">{{$category->category_name}}</option>
+              <option value="{{$category->id}}" {{ (old('category') ?? $company->company_category_id) == $category->id ? 'selected' : '' }}>{{$category->category_name}}</option>
             @endforeach
           </select>
         </div>
@@ -42,7 +42,7 @@
           <div class="py-3">
             <p>Company Title</p>
           </div>
-          <input type="text" placeholder="Company title" class="form-control @error('password') is-invalid @enderror" name="title" value="{{ old('title')??$company->title }}" required>
+          <input type="text" placeholder="Company title" class="form-control @error('title') is-invalid @enderror" name="title" value="{{ old('title')??$company->title }}" required>
             @error('title')
                 <span class="invalid-feedback" role="alert">
                     <strong>{{ $message }}</strong>

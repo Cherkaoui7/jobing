@@ -27,8 +27,8 @@
             @enderror
         </div>
         <div class="form-group">
-          <input type="password" placeholder="Confirm Password *" class="form-control @error('confirm_password') is-invalid @enderror" name="confirm_password" value="{{ old('confirm_password') }}" required>
-            @error('confirm_password')
+          <input type="password" placeholder="Confirm Password *" class="form-control @error('new_password_confirmation') is-invalid @enderror" name="new_password_confirmation" required>
+            @error('new_password_confirmation')
                 <span class="invalid-feedback" role="alert">
                     <strong>{{ $message }}</strong>
                 </span>

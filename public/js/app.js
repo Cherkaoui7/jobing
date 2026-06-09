@@ -1835,10 +1835,13 @@ __webpack_require__(/*! ./bootstrap */ "./resources/js/bootstrap.js");
 
 
 
-var root = react_dom_client__WEBPACK_IMPORTED_MODULE_1__.createRoot(document.getElementById("app"));
-root.render(/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)(react_router_dom__WEBPACK_IMPORTED_MODULE_4__.BrowserRouter, {
-  children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)(_components_AppComponent_jsx__WEBPACK_IMPORTED_MODULE_2__["default"], {})
-}));
+var appElement = document.getElementById("app");
+if (appElement) {
+  var root = react_dom_client__WEBPACK_IMPORTED_MODULE_1__.createRoot(appElement);
+  root.render(/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)(react_router_dom__WEBPACK_IMPORTED_MODULE_4__.BrowserRouter, {
+    children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)(_components_AppComponent_jsx__WEBPACK_IMPORTED_MODULE_2__["default"], {})
+  }));
+}
 
 /***/ }),
 
